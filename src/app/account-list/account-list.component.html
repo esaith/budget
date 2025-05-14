@@ -1,0 +1,33 @@
+<div class="flex items-center">
+  <label for='newaccount'>New Account Name</label>
+  <input id="newaccount" [(ngModel)]="newAccountName" (keydown)="newAccountInputKeyDown($event)" class="border ml-2" />
+  <button class="ml-2 p-1 bg-blue-600 text-white rounded-md" (click)="createNewAccount()">Create</button>
+</div>
+<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+  <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Name
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Column 1
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Column 2
+                </th>
+                 <th scope="col" class="px-6 py-3">
+                  Edit
+                </th>
+             </tr>
+        </thead>
+  <tbody>
+@for (account of accounts; track account) {
+  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+    <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{account.Name}}</td>
+    <td>Col 1</td>
+    <td>Col 2</td>
+    <td class="text-blue-500 cursor-pointer"><div (click)="editAccount(account)">Edit</div></td>
+  </tr>
+}
+  </tbody>
+</table>

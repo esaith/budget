@@ -1,3 +1,15 @@
-import { Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { AccountListComponent } from './account-list/account-list.component';
+import { AccountEditComponent } from './account-edit/account-edit.component';
 
-export const routes: Routes = [];
+const routes: Routes = [
+  { path: 'account-edit/:id', component: AccountEditComponent },
+  { path: '', component: AccountListComponent }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes, {})],
+  exports: [RouterModule]
+})
+export class AppRoutingModule {}
