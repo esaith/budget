@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccountService } from '../account.service';
 import { Account } from '../entities/account';
@@ -10,7 +10,7 @@ import { Account } from '../entities/account';
   standalone: false
 })
 export class AccountListComponent implements OnInit {
-  @ViewChild('newAccountInput') newAccountInput!: HTMLInputElement;
+  @ViewChild('newAccountInput') newAccountInput!: ElementRef;
   newAccountName = '';
   accounts = new Array<Account>();
 
@@ -30,7 +30,7 @@ export class AccountListComponent implements OnInit {
     this.newAccountName = '';
 
     if (this.newAccountInput) {
-      this.newAccountInput.focus();
+      this.newAccountInput.nativeElement.focus();
     }
   }
 
