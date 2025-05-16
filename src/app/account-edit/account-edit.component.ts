@@ -9,6 +9,5 @@ import { Component, OnInit } from '@angular/core';
 export class AccountEditComponent implements OnInit {
 
   ngOnInit() {
-    console.log('Account Edit Component page loaded');
   }
 }
