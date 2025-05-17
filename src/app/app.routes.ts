@@ -5,6 +5,7 @@ import { AccountEditComponent } from './account-edit/account-edit.component';
 
 const routes: Routes = [
   { path: 'account-edit/:id', component: AccountEditComponent },
+  { path: 'account-list', component: AccountListComponent },
   { path: '', component: AccountListComponent }
 ];
 
@@ -12,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, {})],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

@@ -6,12 +6,14 @@ import { AppComponent } from './app.component';
 import { AccountEditComponent } from './account-edit/account-edit.component';
 import { AccountListComponent } from './account-list/account-list.component';
 import { AppRoutingModule } from './app.routes';
+import { ConfirmDeleteComponent } from './shared/confirm-delete/confirm-delete.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AccountEditComponent,
-    AccountListComponent
+    AccountListComponent,
+    ConfirmDeleteComponent
   ],
   imports: [
     BrowserModule,
@@ -21,4 +23,4 @@ import { AppRoutingModule } from './app.routes';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

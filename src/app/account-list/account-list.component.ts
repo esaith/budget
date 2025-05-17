@@ -1,7 +1,7 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccountService } from '../account.service';
-import { Account } from '../entities/account';
+import { Account, AccountType } from '../entities/account';
+import { AccountService } from '../entities/account.service';
 
 @Component({
   selector: 'app-account-list',
@@ -13,6 +13,7 @@ export class AccountListComponent implements OnInit {
   @ViewChild('newAccountInput') newAccountInput!: ElementRef;
   newAccountName = '';
   accounts = new Array<Account>();
+  AccountType = AccountType;
 
   private router = inject(Router);
   private accountService = inject(AccountService);
@@ -25,6 +26,8 @@ export class AccountListComponent implements OnInit {
     const newAccount = new Account();
     newAccount.Name = this.newAccountName;
     newAccount.AccountId = this.accounts.length + 1;
+
+    this.accountService.saveAccount(newAccount);
     this.accounts.push(newAccount);
 
     this.newAccountName = '';
@@ -41,7 +44,6 @@ export class AccountListComponent implements OnInit {
   }
 
   editAccount = async (account: Account) => {
-    await this.accountService.saveAccounts(this.accounts);
     this.router.navigate(['/account-edit', account.AccountId]);
   }
 }
