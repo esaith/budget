@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Account } from "./account";
+import { sortByOrder } from "./helper";
 
 @Injectable({
     providedIn: 'root',
@@ -23,10 +24,23 @@ export class AccountService {
         return Promise.resolve();
     };
 
-    getAccounts = (): Promise<Array<Account>> => {
+    getAccounts = async (): Promise<Array<Account>> => {
         const accountStr = localStorage.getItem('accounts');
         if (accountStr) {
-            return JSON.parse(accountStr);
+            const accounts = JSON.parse(accountStr) as Array<Account>;
+
+            accounts.sort(sortByOrder);
+
+            for (let i = 0; i < accounts.length; ++i) {
+                accounts[i].Order = i;
+
+                const foundAccount = await this.getAccountById(accounts[i].AccountId);
+                if (foundAccount) {
+                    accounts[i] = foundAccount;
+                }
+            }
+
+            return accounts;
         }
 
         return Promise.resolve(new Array<Account>());
@@ -46,7 +60,7 @@ export class AccountService {
         const account = await this.getAccountById(accountId);
 
         if (account) {
-            account.Active = false;
+            account.IsActive = false;
             await this.saveAccount(account);
         }
     }

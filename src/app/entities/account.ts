@@ -4,9 +4,10 @@ export enum TransactionType { Unset, Charge, Deposit, Transfer }
 export class Account {
     AccountId = 0;
     Name = '';
-    Balance = 1;
+    Balance = 0;
     Type = AccountType.Unset;
-    Active = true;
+    IsActive = true;
+    Order = -1;
     Transactions = new Array<Transaction>();
 
     clone = (): Account => {
@@ -14,6 +15,9 @@ export class Account {
         cloneAccount.AccountId = this.AccountId;
         cloneAccount.Name = this.Name;
         cloneAccount.Type = this.Type;
+        cloneAccount.Balance = this.Balance;
+        cloneAccount.IsActive = this.IsActive;
+        cloneAccount.Order = this.Order;
 
         return cloneAccount;
     }

@@ -47,13 +47,4 @@ export class AccountEditComponent implements OnInit {
     this.accountService.saveAccount(this.account);
     this.router.navigate(['/account-list']);
   }
-
-  deactivateConfirm = async () => {
-    const result = await this.confirmService.open('Are you sure you want to deactivate?');
-
-    if (result) {
-      await this.accountService.deactivate(this.account.AccountId);
-      this.router.navigate(['/account-list']);
-    }
-  }
 }

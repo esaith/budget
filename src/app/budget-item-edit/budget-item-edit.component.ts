@@ -1,0 +1,52 @@
+import { Component, inject } from '@angular/core';
+import { BudgetItem } from '../entities/budgetItem';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BudgetItemService } from '../entities/budget.service';
+import { ConfirmService } from '../shared/confirm-delete/confirm.service';
+
+@Component({
+  selector: 'app-budget-item-edit',
+  templateUrl: './budget-item-edit.component.html',
+  styleUrl: './budget-item-edit.component.scss',
+  standalone: false
+})
+export class BudgetItemEditComponent {
+  budgetItem = new BudgetItem();
+  budgetItemTypes = new Array<string>();
+  frequency = ['Days', 'Weeks', 'Months'];
+
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private budgetItemService = inject(BudgetItemService);
+  private confirmService = inject(ConfirmService)
+
+  async ngOnInit() {
+    const id = +this.route.snapshot.params['id'];
+    const budgetItem = await this.budgetItemService.getById(id);
+
+    if (!budgetItem) {
+      this.router.navigate(['/account-list']);
+    }
+
+    this.budgetItemTypes = await this.budgetItemService.getBudgetItemTypes();
+    this.budgetItem = budgetItem as BudgetItem;
+  }
+
+  budgetItemTypeChange(event: Event) {
+    if (this.budgetItem && event && event.target) {
+      const selectHtmlElement = event.target as HTMLSelectElement
+      this.budgetItem.Type = selectHtmlElement.value;
+    }
+  }
+  budgetItemFrequencyChange(event: Event) {
+    if (this.budgetItem && event && event.target) {
+      const selectHtmlElement = event.target as HTMLSelectElement
+      this.budgetItem.Frequency = selectHtmlElement.value;
+    }
+  }
+
+  save() {
+    this.budgetItemService.saveBudgetItem(this.budgetItem);
+    this.router.navigate(['/account-list']);
+  }
+}
