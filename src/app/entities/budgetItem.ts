@@ -6,6 +6,7 @@ export class BudgetItem {
     Type = '';
     StartDate = new Date();
     EndDate = new Date();
+    AccountId = 0;
 
     IsRepeat = false;
     FrequencyNumber = '';
@@ -23,6 +24,7 @@ export class BudgetItem {
         result.EndDate = this.EndDate;
         result.Type = this.Type;
         result.Order = this.Order;
+        result.AccountId = this.AccountId;
 
         return result;
     }

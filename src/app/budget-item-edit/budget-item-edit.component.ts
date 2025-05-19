@@ -49,4 +49,13 @@ export class BudgetItemEditComponent {
     this.budgetItemService.saveBudgetItem(this.budgetItem);
     this.router.navigate(['/account-list']);
   }
+
+  confirmDelete = async () => {
+    const confirmed = await this.confirmService.open('Are you sure you want to delete this budget item?');
+
+    if (confirmed) {
+      this.budgetItemService.delete(this.budgetItem.BudgetItemId);
+      this.router.navigate(['/account-list']);
+    }
+  }
 }
