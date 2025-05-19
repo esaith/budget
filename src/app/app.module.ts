@@ -8,6 +8,7 @@ import { AccountListComponent } from './account-list/account-list.component';
 import { AppRoutingModule } from './app.routes';
 import { ConfirmDeleteComponent } from './shared/confirm-delete/confirm-delete.component';
 import { BudgetItemEditComponent } from './budget-item-edit/budget-item-edit.component';
+import { DragDropDirective } from './shared/dragdrop/dragdrop.directive';
 
 @NgModule({
   declarations: [
@@ -15,13 +16,14 @@ import { BudgetItemEditComponent } from './budget-item-edit/budget-item-edit.com
     AccountEditComponent,
     AccountListComponent,
     BudgetItemEditComponent,
-    ConfirmDeleteComponent
+    ConfirmDeleteComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    DragDropDirective
   ],
   bootstrap: [AppComponent]
 })
