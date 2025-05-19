@@ -8,7 +8,7 @@ import { AccountListComponent } from './account-list/account-list.component';
 import { AppRoutingModule } from './app.routes';
 import { ConfirmDeleteComponent } from './shared/confirm-delete/confirm-delete.component';
 import { BudgetItemEditComponent } from './budget-item-edit/budget-item-edit.component';
-import { DragDropDirective } from './shared/dragdrop/dragdrop.directive';
+import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -23,7 +23,8 @@ import { DragDropDirective } from './shared/dragdrop/dragdrop.directive';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    DragDropDirective
+    CdkDropList,
+    CdkDrag
   ],
   bootstrap: [AppComponent]
 })

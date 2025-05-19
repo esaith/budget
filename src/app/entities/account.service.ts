@@ -25,25 +25,28 @@ export class AccountService {
     };
 
     getAccounts = async (): Promise<Array<Account>> => {
+        const result = new Array<Account>();
         const accountStr = localStorage.getItem('accounts');
+
         if (accountStr) {
             const accounts = JSON.parse(accountStr) as Array<Account>;
 
-            accounts.sort(sortByOrder);
-
             for (let i = 0; i < accounts.length; ++i) {
-                accounts[i].Order = i;
-
                 const foundAccount = await this.getAccountById(accounts[i].AccountId);
+
                 if (foundAccount) {
-                    accounts[i] = foundAccount;
+                    result.push(Object.assign(new Account(), foundAccount))
                 }
             }
 
-            return accounts;
+            result.sort(sortByOrder);
+
+            for (let i = 0; i < result.length; ++i) {
+                result[i].Order = i;
+            }
         }
 
-        return Promise.resolve(new Array<Account>());
+        return Promise.resolve(result);
     };
 
     getAccountById = async (accountId: number): Promise<Account | null> => {

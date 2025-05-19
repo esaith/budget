@@ -4,6 +4,8 @@ import { Account, AccountType } from '../entities/account';
 import { AccountService } from '../entities/account.service';
 import { BudgetItem } from '../entities/budgetItem';
 import { BudgetItemService } from '../entities/budget.service';
+import { sortByOrder } from '../entities/helper';
+import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-account-list',
@@ -26,6 +28,8 @@ export class AccountListComponent implements OnInit {
 
   async ngOnInit() {
     this.accounts = await this.accountService.getAccounts();
+    this.accounts.sort(sortByOrder);
+
     this.budgetItems = await this.budgetItemService.getBudgetItems();
   }
 
@@ -86,5 +90,25 @@ export class AccountListComponent implements OnInit {
     if (keydown.code === 'Enter' || keydown.code === 'NumpadEnter') {
       this.createNewBudgetItem();
     }
+  }
+
+  dropAccounts(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.accounts, event.previousIndex, event.currentIndex);
+
+    for (let i = 0; i < this.accounts.length; ++i) {
+      this.accounts[i].Order = i;
+    }
+
+    this.accountService.saveAccounts(this.accounts);
+  }
+
+  dropBudgetItems(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.budgetItems, event.previousIndex, event.currentIndex);
+
+    for (let i = 0; i < this.budgetItems.length; ++i) {
+      this.budgetItems[i].Order = i;
+    }
+
+    this.budgetItemService.saveBudgetItems(this.budgetItems);
   }
 }

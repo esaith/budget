@@ -66,6 +66,7 @@ export class BudgetItemService {
     getBudgetItemTypes = async (): Promise<Array<string>> => {
         const result = new Array<string>();
         result.push('');
+        result.push('Income');
         result.push('Mortgage');
         result.push('Rent');
         result.push('Utilities');

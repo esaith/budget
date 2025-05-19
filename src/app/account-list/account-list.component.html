@@ -11,7 +11,7 @@
           <th scope="col" class="px-6 py-3"> Edit </th>
         </tr>
       </thead>
-      <tbody class="">
+      <tbody cdkDropList (cdkDropListDropped)="dropAccounts($event)">
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
           <td></td>
           <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -27,9 +27,9 @@
           </td>
         </tr>
         @for (account of accounts; track account) {
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-          <td scope="row" class="cursor-pointer">
-            <div app-dragdrop>
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 overflow-hidden" cdkDrag>
+          <td scope="row" class="cursor-pointer select-none">
+            <div>
               <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                 viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14" />
@@ -52,6 +52,7 @@
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
         <tr>
+          <th></th>
           <th scope="col" class="px-6 py-3"> Name</th>
           <th scope="col" class="px-6 py-3"> Type</th>
           <th scope="col" class="px-6 py-3"> Amount</th>
@@ -59,8 +60,9 @@
           <th scope="col" class="px-6 py-3"> Edit </th>
         </tr>
       </thead>
-      <tbody class="">
+      <tbody cdkDropList (cdkDropListDropped)="dropBudgetItems($event)">
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+          <td></td>
           <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
             <input type="text" #newBudgetItemInput id="newBudgetItemName" [(ngModel)]="newBudgetItemName" (keydown)="newBudgetInputKeyDown($event)"
               class="align-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
@@ -75,7 +77,15 @@
           </td>
         </tr>
         @for (budgetItem of budgetItems; track budgetItem) {
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200" cdkDrag>
+          <td scope="row" class="cursor-pointer select-none">
+            <div>
+              <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14" />
+              </svg>
+            </div>
+          </td>
           <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{budgetItem.Name}}</td>
           <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">{{budgetItem.Type}}</td>
           <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">{{budgetItem.Amount}}</td>
