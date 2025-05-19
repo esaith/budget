@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
-import { Account, AccountType } from '../entities/account';
+import { Account, AccountType, APR } from '../entities/account';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccountService } from '../entities/account.service';
 import { ConfirmService } from '../shared/confirm-delete/confirm.service';
@@ -13,11 +13,13 @@ import { ConfirmService } from '../shared/confirm-delete/confirm.service';
 export class AccountEditComponent implements OnInit {
   account = new Account();
   accountType = "";
+  newAPR = new APR();
+  AccountType = AccountType;
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private accountService = inject(AccountService);
-  private confirmService = inject(ConfirmService)
+  private confirmService = inject(ConfirmService);
 
   async ngOnInit() {
     const id = +this.route.snapshot.params['id'];
@@ -25,6 +27,11 @@ export class AccountEditComponent implements OnInit {
 
     if (!account) {
       this.router.navigate(['/account-list']);
+      return;
+    }
+
+    if (!account.APRPromo) {
+      account.APRPromo = new APR();
     }
 
     this.account = account as Account;

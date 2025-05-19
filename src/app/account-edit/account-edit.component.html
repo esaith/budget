@@ -6,6 +6,13 @@
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
     </div>
     <div class="mb-5">
+        <div class="flex items-center">
+            <input checked id="checked-checkbox" type="checkbox" value="" [(ngModel)]="account.IsActive"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            <label for="checked-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Active</label>
+        </div>
+    </div>
+    <div class="mb-5">
         <label for="accounttype" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Account Type</label>
         <select id="accounttype" [(ngModel)]="accountType" (change)="accountTypeChange($event)" name="accountType"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -17,12 +24,49 @@
         </select>
     </div>
     <div class="mb-5">
-        <div class="flex items-center">
-            <input checked id="checked-checkbox" type="checkbox" value="" [(ngModel)]="account.IsActive"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-            <label for="checked-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Active</label>
-        </div>
+        <label for="balance" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Balance</label>
+        <input type="number" min="0.01" step="0.01" id="balance" [(ngModel)]="account.Balance"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
     </div>
+
+    <ng-container *ngIf="account.Type === AccountType.CreditCard || account.Type === AccountType.Loan">
+        <div class="mb-5">
+            <label for="APR" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">APR</label>
+            <input type="number" min="0.01" step="0.01" id="APR" [(ngModel)]="account.APR"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+        </div>
+        <div class="mb-5">
+            <div class="flex items-center">
+                <input checked id="haspromo" type="checkbox" value="" [(ngModel)]="account.HasAPRPromo"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="haspromo" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Has APR Promo</label>
+            </div>
+            <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Some credit cards have 0% interest or special promos for
+                certain
+                lengths of time.
+                You can use this tool to include just the normal APR or the APR and the special promos.</p>
+        </div>
+        <ng-container *ngIf="account.HasAPRPromo">
+            <div class="mb-5 frequency">
+                <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Promo APR</label>
+                <div class="mb-5">
+                    <label for="APR_promo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">APR</label>
+                    <input type="number" min="0.01" step="0.01" id="APR_promo" [(ngModel)]="account.APRPromo.Rate"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                </div>
+            </div>
+            <div class="mb-5">
+                <label for="StartDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Promo Start Date</label>
+                <input type="date" id="StartDate" [(ngModel)]="account.APRPromo.StartDate"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+            <div class="mb-5">
+                <label for="EndDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Promo End Date</label>
+                <input type="date" id="EndDate" [(ngModel)]="account.APRPromo.EndDate"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+        </ng-container>
+    </ng-container>
     <div class="flex justify-between">
         <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium 
         rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 

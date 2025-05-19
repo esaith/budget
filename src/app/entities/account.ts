@@ -9,6 +9,10 @@ export class Account {
     IsActive = true;
     Order = -1;
     Transactions = new Array<Transaction>();
+    APR = 0;
+
+    HasAPRPromo = false;
+    APRPromo = new APR();
 
     clone = (): Account => {
         const cloneAccount = new Account();
@@ -21,6 +25,12 @@ export class Account {
 
         return cloneAccount;
     }
+}
+
+export class APR {
+    StartDate = new Date();
+    EndDate = new Date();
+    Rate = 0;
 }
 
 export class Transaction {

@@ -69,7 +69,10 @@ export class BudgetItemService {
         result.push('Income');
         result.push('Mortgage');
         result.push('Rent');
+        result.push('Home Repairs');
         result.push('Utilities');
+        result.push('Vehicle');
+        result.push('Insurance');
         result.push('Food');
         result.push('Phone');
         result.push('Pets');
