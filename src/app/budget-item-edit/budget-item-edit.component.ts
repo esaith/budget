@@ -43,6 +43,14 @@ export class BudgetItemEditComponent {
       this.budgetItem.Type = selectHtmlElement.value;
     }
   }
+
+  budgetItemAccountChange(event: Event) {
+    if (this.budgetItem && event && event.target) {
+      const selectHtmlElement = event.target as HTMLSelectElement
+      this.budgetItem.AccountId = +selectHtmlElement.value;
+    }
+  }
+
   budgetItemFrequencyChange(event: Event) {
     if (this.budgetItem && event && event.target) {
       const selectHtmlElement = event.target as HTMLSelectElement

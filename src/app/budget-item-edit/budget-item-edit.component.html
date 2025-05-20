@@ -3,7 +3,7 @@
 
     <div class="mb-5">
         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-        <input type="type" id="name" [(ngModel)]="budgetItem.Name"
+        <input type="text" id="name" [(ngModel)]="budgetItem.Name"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
     </div>
     <div class="mb-5">
@@ -19,8 +19,8 @@
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
     </div>
     <div class="mb-5">
-        <label for="account" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Account</label>
-        <select id="account" [(ngModel)]="budgetItem.AccountId" (change)="budgetItemTypeChange($event)" name="account"
+        <label for="account" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Payment Account</label>
+        <select id="account" [(ngModel)]="budgetItem.AccountId" (change)="budgetItemAccountChange($event)" name="account"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
             <option *ngFor="let account of accounts" [value]="account.AccountId">{{account.Name}}</option>
         </select>
@@ -39,11 +39,11 @@
     </div>
 
     <div class="mb-5 frequency" *ngIf="budgetItem.IsRepeat">
-        <label for="type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Frequency</label>
+        <label for="FrequencyNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Frequency</label>
         <div class="flex flex-row gap-2">
             <input type="number" id="FrequencyNumber" [(ngModel)]="budgetItem.FrequencyNumber"
                 class="w-1/4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-            <select id="type" [(ngModel)]="budgetItem.Frequency" (change)="budgetItemFrequencyChange($event)" name="type"
+            <select id="FrequencyNumberName" [(ngModel)]="budgetItem.Frequency" (change)="budgetItemFrequencyChange($event)" name="FrequencyNumberName"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option *ngFor="let frequencyType of frequency" [value]="frequencyType">{{frequencyType}}</option>
             </select>
