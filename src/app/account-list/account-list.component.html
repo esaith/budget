@@ -1,6 +1,17 @@
 <div class="flex flex-row align-top w-screen">
   <div class="p-2">
     <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">Accounts</h3>
+
+    <div class="my-5">
+      <label for="newAccount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Account</label>
+      <div class="flex flex-row align-center text-white mb-2">
+        <input type="text" #newAccountInput id="newAccount" [(ngModel)]="newAccountName" (keydown)="newAccountInputKeyDown($event)"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-md p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+        <button type="submit"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2"
+          (click)="createNewAccount()">Create</button>
+      </div>
+    </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
         <tr>
@@ -12,25 +23,12 @@
         </tr>
       </thead>
       <tbody cdkDropList (cdkDropListDropped)="dropAccounts($event)">
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-          <td></td>
-          <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            <input type="text" #newAccountInput id="newAccount" [(ngModel)]="newAccountName" (keydown)="newAccountInputKeyDown($event)"
-              class="align-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-          </td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"></td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"></td>
-          <td scope="row" class="px-6 py-4 text-sky-500 whitespace-nowrap cursor-pointer">
-            <button type="submit"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2"
-              (click)="createNewAccount()">Create</button>
-          </td>
-        </tr>
         @for (account of accounts; track account) {
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 overflow-hidden" cdkDrag>
+        <tr [class.income]="account.Type === AccountType.Checking || account.Type === AccountType.Saving"
+          class="debt bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 overflow-hidden" cdkDrag>
           <td scope="row" class="cursor-pointer select-none">
             <div>
-              <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+              <svg class="m-auto w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                 viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14" />
               </svg>
@@ -49,6 +47,16 @@
   </div>
   <div class="p-2">
     <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">Budget Items | Static Costs</h3>
+    <div class="my-5">
+      <label for="newAccount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Budget Item</label>
+      <div class="flex flex-row align-center text-white mb-2">
+        <input type="text" #newBudgetItemInput id="newBudgetItemName" [(ngModel)]="newBudgetItemName" (keydown)="newBudgetInputKeyDown($event)"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-md p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+        <button type="submit"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2"
+          (click)="createNewBudgetItem()">Create</button>
+      </div>
+    </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
         <tr>
@@ -61,26 +69,12 @@
         </tr>
       </thead>
       <tbody cdkDropList (cdkDropListDropped)="dropBudgetItems($event)">
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-          <td></td>
-          <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            <input type="text" #newBudgetItemInput id="newBudgetItemName" [(ngModel)]="newBudgetItemName" (keydown)="newBudgetInputKeyDown($event)"
-              class="align-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-          </td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"></td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"></td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"></td>
-          <td scope="row" class="px-6 py-4 text-sky-500 whitespace-nowrap cursor-pointer">
-            <button type="submit"
-              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2"
-              (click)="createNewBudgetItem()">Create</button>
-          </td>
-        </tr>
         @for (budgetItem of budgetItems; track budgetItem) {
-        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200" cdkDrag>
-          <td scope="row" class="cursor-pointer select-none">
+        <tr [class.debt]="budgetItem.Amount < 0" [class.income]="budgetItem.Amount > 0"
+          class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200" cdkDrag>
+          <td scope="row" class="px-6 py-3 cursor-pointer select-none">
             <div>
-              <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+              <svg class="m-auto w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                 viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14" />
               </svg>
