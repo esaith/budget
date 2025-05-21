@@ -1,6 +1,8 @@
 <div class="flex flex-row align-top w-screen">
   <div class="p-2">
-    <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">Accounts</h3>
+    <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">
+      Accounts
+    </h3>
 
     <div class="my-5">
       <label for="newAccount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Account</label>
@@ -9,23 +11,27 @@
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-md p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
         <button type="submit"
           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2"
-          (click)="createNewAccount()">Create</button>
+          (click)="createNewAccount()">
+          Create
+        </button>
       </div>
     </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
           <th scope="col" class="px-6 py-3"></th>
-          <th scope="col" class="px-6 py-3"> Name</th>
-          <th scope="col" class="px-6 py-3"> Type</th>
-          <th scope="col" class="px-6 py-3"> Balance</th>
-          <th scope="col" class="px-6 py-3"> Edit </th>
+          <th scope="col" class="px-6 py-3">Name</th>
+          <th scope="col" class="px-6 py-3">Type</th>
+          <th scope="col" class="px-6 py-3">Balance</th>
+          <th scope="col" class="px-6 py-3">Edit</th>
         </tr>
       </thead>
       <tbody cdkDropList (cdkDropListDropped)="dropAccounts($event)">
         @for (account of accounts; track account) {
-        <tr [class.income]="account.Type === AccountType.Checking || account.Type === AccountType.Saving"
-          class="debt bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 overflow-hidden" cdkDrag>
+        <tr [class.income]="
+            account.Type === AccountType.Checking ||
+            account.Type === AccountType.Saving
+          " class="debt bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 overflow-hidden" cdkDrag>
           <td scope="row" class="cursor-pointer select-none">
             <div>
               <svg class="m-auto w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
@@ -34,9 +40,15 @@
               </svg>
             </div>
           </td>
-          <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{account.Name}}</td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">{{AccountType[account.Type]}}</td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">{{account.Balance}}</td>
+          <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            {{ account.Name }}
+          </td>
+          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+            {{ AccountType[account.Type] }}
+          </td>
+          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+            {{ account.Balance }}
+          </td>
           <td scope="row" class="px-6 py-4 text-sky-500 whitespace-nowrap cursor-pointer">
             <div (click)="editAccount(account)">Edit</div>
           </td>
@@ -46,7 +58,9 @@
     </table>
   </div>
   <div class="p-2">
-    <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">Budget Items | Static Costs</h3>
+    <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">
+      Budget Items | Static Costs
+    </h3>
     <div class="my-5">
       <label for="newAccount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Budget Item</label>
       <div class="flex flex-row align-center text-white mb-2">
@@ -54,18 +68,20 @@
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-md p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
         <button type="submit"
           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2"
-          (click)="createNewBudgetItem()">Create</button>
+          (click)="createNewBudgetItem()">
+          Create
+        </button>
       </div>
     </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
           <th></th>
-          <th scope="col" class="px-6 py-3"> Name</th>
-          <th scope="col" class="px-6 py-3"> Type</th>
-          <th scope="col" class="px-6 py-3"> Amount</th>
-          <th scope="col" class="px-6 py-3"> Frequency</th>
-          <th scope="col" class="px-6 py-3"> Edit </th>
+          <th scope="col" class="px-6 py-3">Name</th>
+          <th scope="col" class="px-6 py-3">Type</th>
+          <th scope="col" class="px-6 py-3">Amount</th>
+          <th scope="col" class="px-6 py-3">Frequency</th>
+          <th scope="col" class="px-6 py-3">Edit</th>
         </tr>
       </thead>
       <tbody cdkDropList (cdkDropListDropped)="dropBudgetItems($event)">
@@ -80,13 +96,70 @@
               </svg>
             </div>
           </td>
-          <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{budgetItem.Name}}</td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">{{budgetItem.Type}}</td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">{{budgetItem.Amount}}</td>
-          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">{{budgetItem.FrequencyNumber && budgetItem.FrequencyNumber ?
-            budgetItem.FrequencyNumber + " / " + budgetItem.Frequency : ''}}</td>
+          <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            {{ budgetItem.Name }}
+          </td>
+          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+            {{ budgetItem.Type }}
+          </td>
+          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+            {{ budgetItem.Amount }}
+          </td>
+          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+            {{
+            budgetItem.FrequencyNumber && budgetItem.FrequencyNumber
+            ? budgetItem.FrequencyNumber + " / " + budgetItem.Frequency
+            : ""
+            }}
+          </td>
           <td scope="row" class="px-6 py-4 text-sky-500 whitespace-nowrap cursor-pointer">
             <div (click)="editBudgetItem(budgetItem)">Edit</div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="p-2">
+    <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">
+      Hypotheticals
+    </h3>
+    <div class="my-5">
+      <label for="newAccount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Hypothetical</label>
+      <div class="flex flex-row align-center text-white mb-2">
+        <input type="text" #newHypoInput id="newHypoInputName" [(ngModel)]="newHypoName" (keydown)="newHypoInputKeyDown($event)"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-md p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+        <button type="submit"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2"
+          (click)="createNewHypothetical()">
+          Create
+        </button>
+      </div>
+    </div>
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th></th>
+          <th scope="col" class="px-6 py-3">Name</th>
+          <th scope="col" class="px-6 py-3">Edit</th>
+        </tr>
+      </thead>
+      <tbody cdkDropList (cdkDropListDropped)="dropHypotheticals($event)">
+        @for (hypo of hypotheticals; track hypo) {
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200" cdkDrag>
+          <td scope="row" class="py-3 cursor-pointer select-none">
+            <div>
+              <svg class="m-auto w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14" />
+              </svg>
+            </div>
+          </td>
+          <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            {{ hypo.Name }}
+          </td>
+          <td scope="row" class="px-6 py-4 text-sky-500 whitespace-nowrap cursor-pointer">
+            <div (click)="editHypothetical(hypo)">Edit</div>
           </td>
         </tr>
         }

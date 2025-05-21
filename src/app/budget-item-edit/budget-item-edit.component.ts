@@ -58,8 +58,8 @@ export class BudgetItemEditComponent {
     }
   }
 
-  save() {
-    this.budgetItemService.saveBudgetItem(this.budgetItem);
+  save = async () => {
+    await this.budgetItemService.save(this.budgetItem);
     this.router.navigate(['/account-list']);
   }
 

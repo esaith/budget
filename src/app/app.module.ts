@@ -8,7 +8,9 @@ import { AccountListComponent } from './account-list/account-list.component';
 import { AppRoutingModule } from './app.routes';
 import { ConfirmDeleteComponent } from './shared/confirm-delete/confirm-delete.component';
 import { BudgetItemEditComponent } from './budget-item-edit/budget-item-edit.component';
-import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
+import { HypotheticalComponent } from './hypothetical/hypothetical.component';
+
 
 @NgModule({
   declarations: [
@@ -17,6 +19,7 @@ import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk
     AccountListComponent,
     BudgetItemEditComponent,
     ConfirmDeleteComponent,
+    HypotheticalComponent
   ],
   imports: [
     BrowserModule,

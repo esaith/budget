@@ -7,3 +7,8 @@ export function sortByOrder(a: { Order: number }, b: { Order: number }): number 
     if (a.Order && !b.Order && b.Order !== 0) return -1;
     return a.Order < b.Order ? -1 : a.Order === b.Order ? 0 : 1;
 }
+
+let id = 1;
+export function generateUniqueId(): number {
+    return ++id;
+}

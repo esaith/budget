@@ -6,19 +6,19 @@ import { sortByOrder } from "./helper";
     providedIn: 'root',
 })
 export class AccountService {
-    saveAccounts = (accounts: Array<Account>): Promise<void> => {
+    saveMany = (accounts: Array<Account>): Promise<void> => {
         localStorage.setItem('accounts', JSON.stringify(accounts));
         return Promise.resolve();
     };
 
-    saveAccount = async (account: Account): Promise<void> => {
+    save = async (account: Account): Promise<void> => {
         localStorage.setItem(`account_${account.AccountId}`, JSON.stringify(account));
 
         const accounts = await this.getAccounts();
         const found = accounts.find(x => x.AccountId === account.AccountId);
         if (!found) {
             accounts.push(account.clone())
-            await this.saveAccounts(accounts);
+            await this.saveMany(accounts);
         }
 
         return Promise.resolve();
@@ -64,7 +64,7 @@ export class AccountService {
 
         if (account) {
             account.IsActive = false;
-            await this.saveAccount(account);
+            await this.save(account);
         }
     }
 }

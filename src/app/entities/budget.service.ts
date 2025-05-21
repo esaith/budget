@@ -6,19 +6,19 @@ import { sortByOrder } from "./helper";
     providedIn: 'root',
 })
 export class BudgetItemService {
-    saveBudgetItems = (budgetItems: Array<BudgetItem>): Promise<void> => {
+    saveMany = (budgetItems: Array<BudgetItem>): Promise<void> => {
         localStorage.setItem('budgetItems', JSON.stringify(budgetItems));
         return Promise.resolve();
     };
 
-    saveBudgetItem = async (budgetItem: BudgetItem): Promise<void> => {
+    save = async (budgetItem: BudgetItem): Promise<void> => {
         localStorage.setItem(`budgetItem_${budgetItem.BudgetItemId}`, JSON.stringify(budgetItem));
 
         const budgetItems = await this.getBudgetItems();
         const found = budgetItems.find(x => x.BudgetItemId === budgetItem.BudgetItemId);
         if (!found) {
             budgetItems.push(budgetItem.clone())
-            await this.saveBudgetItems(budgetItems);
+            await this.saveMany(budgetItems);
         }
 
         return Promise.resolve();
@@ -60,7 +60,7 @@ export class BudgetItemService {
     delete = async (budgetItemId: number): Promise<void> => {
         let budgetItems = await this.getBudgetItems();
         budgetItems = budgetItems.filter(x => +x.BudgetItemId !== +budgetItemId);
-        await this.saveBudgetItems(budgetItems);
+        await this.saveMany(budgetItems);
     }
 
     getBudgetItemTypes = async (): Promise<Array<string>> => {

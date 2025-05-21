@@ -1,5 +1,7 @@
+import { generateUniqueId } from "./helper";
+
 export class BudgetItem {
-    BudgetItemId = 0;
+    BudgetItemId = generateUniqueId();
     Name = '';
     Amount = 0;
     Order = 0;

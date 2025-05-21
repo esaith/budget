@@ -50,8 +50,8 @@ export class AccountEditComponent implements OnInit {
     this.accountType = this.account.Type.toString() || '0';
   }
 
-  save() {
-    this.accountService.saveAccount(this.account);
+  save = async () => {
+    await this.accountService.save(this.account);
     this.router.navigate(['/account-list']);
   }
 }

@@ -1,8 +1,10 @@
+import { generateUniqueId } from "./helper";
+import { Transaction } from "./transaction";
+
 export enum AccountType { Unset, Checking, Saving, CreditCard, Loan }
-export enum TransactionType { Unset, Charge, Deposit, Transfer }
 
 export class Account {
-    AccountId = 0;
+    AccountId = generateUniqueId();
     Name = '';
     Balance = 0;
     Type = AccountType.Unset;
@@ -31,15 +33,4 @@ export class APR {
     StartDate = new Date();
     EndDate = new Date();
     Rate = 0;
-}
-
-export class Transaction {
-    TransactionId = 0;
-    Type = TransactionType.Unset;
-    Amount = 0;
-    Category = '';
-    Desciption = '';
-    Location = '';
-    AccountId: number | null = null;
-    TransferTo: number | null = null;
 }
