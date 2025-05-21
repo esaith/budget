@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmService } from '../shared/confirm-delete/confirm.service';
 import { AccountService } from '../entities/account.service';
@@ -56,6 +56,16 @@ export class HypotheticalComponent implements OnInit {
     if (confirmed) {
       await this.hypoService.delete(this.hypo.HypotheticalId);
       this.router.navigate(['/account-list']);
+    }
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  onKeyEvent = (event: Event) => {
+    if ((event as KeyboardEvent).code === 'Escape') {
+      // Probably need to confirm with the user
+      this.router.navigate(['/account-list']);
+    } else if ((event as KeyboardEvent).code === 'Enter' || (event as KeyboardEvent).code === 'NumpadEnter') {
+      this.save();
     }
   }
 }

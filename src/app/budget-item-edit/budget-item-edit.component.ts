@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { BudgetItem } from '../entities/budgetItem';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BudgetItemService } from '../entities/budget.service';
@@ -69,6 +69,16 @@ export class BudgetItemEditComponent {
     if (confirmed) {
       this.budgetItemService.delete(this.budgetItem.BudgetItemId);
       this.router.navigate(['/account-list']);
+    }
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  onKeyEvent = (event: Event) => {
+    if ((event as KeyboardEvent).code === 'Escape') {
+      // Probably need to confirm with the user
+      this.router.navigate(['/account-list']);
+    } else if ((event as KeyboardEvent).code === 'Enter' || (event as KeyboardEvent).code === 'NumpadEnter') {
+      this.save();
     }
   }
 }

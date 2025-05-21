@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { Account, AccountType, APR } from '../entities/account';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccountService } from '../entities/account.service';
@@ -53,5 +53,15 @@ export class AccountEditComponent implements OnInit {
   save = async () => {
     await this.accountService.save(this.account);
     this.router.navigate(['/account-list']);
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  onKeyEvent = (event: Event) => {
+    if ((event as KeyboardEvent).code === 'Escape') {
+      // Probably need to confirm with the user
+      this.router.navigate(['/account-list']);
+    } else if ((event as KeyboardEvent).code === 'Enter' || (event as KeyboardEvent).code === 'NumpadEnter') {
+      this.save();
+    }
   }
 }
