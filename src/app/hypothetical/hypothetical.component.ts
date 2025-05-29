@@ -1,10 +1,13 @@
-import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, inject, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmService } from '../shared/confirm-delete/confirm.service';
 import { AccountService } from '../entities/account.service';
 import { HypotheticalService } from '../entities/hypothetical.service';
-import { Hypothetical } from './hypothetical';
-import { Account } from '../entities/account';
+import { Hypothetical, HypotheticalAccount } from './hypothetical';
+import { Account, AccountType } from '../entities/account';
+import { formatDate } from '@angular/common';
+import { LogService } from '../entities/log.service';
+import { Transaction } from '../entities/transaction';
 
 @Component({
   selector: 'app-hypothetical',
@@ -12,7 +15,7 @@ import { Account } from '../entities/account';
   styleUrl: './hypothetical.component.scss',
   standalone: false
 })
-export class HypotheticalComponent implements OnInit {
+export class HypotheticalComponent implements OnInit, AfterViewInit {
 
 
   /* 
@@ -31,9 +34,12 @@ export class HypotheticalComponent implements OnInit {
   private accountService = inject(AccountService);
   private hypoService = inject(HypotheticalService);
   private confirmService = inject(ConfirmService);
+  private cdr = inject(ChangeDetectorRef);
+  private logService = inject(LogService);
 
   hypo = new Hypothetical();
   accounts = new Array<Account>();
+  endDate = formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en-US');
 
   async ngOnInit() {
     const id = +this.route.snapshot.params['id'];
@@ -46,6 +52,19 @@ export class HypotheticalComponent implements OnInit {
 
     this.hypo = hypo as Hypothetical;
     this.accounts = await this.accountService.getAccounts();
+
+    for (let account of this.accounts) {
+      if (!this.hypo.Accounts.some(x => x.AccountId === account.AccountId)) {
+        const newHypotheticalAccount = new HypotheticalAccount();
+        newHypotheticalAccount.AccountId = account.AccountId;
+        this.hypo.Accounts.push(newHypotheticalAccount);
+      }
+    }
+  }
+
+  ngAfterViewInit() {
+    console.log(this.endDate)
+    this.cdr.markForCheck();
   }
 
   save = async () => {
@@ -60,6 +79,92 @@ export class HypotheticalComponent implements OnInit {
       await this.hypoService.delete(this.hypo.HypotheticalId);
       this.router.navigate(['/account-list']);
     }
+  }
+
+  onDateChange = (endDateStr: string) => {
+    const startDate = new Date(Date.now());
+    startDate.setUTCHours(12, 0, 0, 0);
+
+    const endDate = new Date(endDateStr);
+    endDate.setUTCHours(12, 0, 0, 0);
+
+    const numOfDays = this.getDateDiff(startDate, endDate);
+
+    this.calculateAccountBalance(numOfDays);
+  }
+
+  private calculateAccountBalance = (numOfDays: number) => {
+    for (const hypoAccount of this.hypo.Accounts) {
+      hypoAccount.DailyBalance = new Array<number>();
+      hypoAccount.Transactions = new Array<Transaction>();
+
+      const account = this.accounts.find(x => x.AccountId === hypoAccount.AccountId);
+      if (!account) {
+        this.logService.addLog('Missing account by Id when calculating account diff in hypotheticals', 'error');
+        continue;
+      }
+
+      if (account.Type === AccountType.CreditCard) {
+
+        /* Need to find out if there was a previous balance after last due date. If so, calculate daily compound
+            interest. If not, do nothing. For now, we will assume there was a balance.
+        */
+        const dailyInterestRate = this.getDailyInterestRate(account);
+        hypoAccount.DailyBalance.push(account.Balance);
+
+        for (let i = 1; i < numOfDays; ++i) {
+
+          if (hypoAccount.DailyBalance[i - 1] < 0) {
+
+            const transaction = new Transaction();
+            transaction.AccountId = account.AccountId;
+
+            transaction.Amount = hypoAccount.DailyBalance[i - 1] * dailyInterestRate;
+            //console.log(`${i}, ${transaction.Amount}`);
+            transaction.Category = 'Interest';
+            transaction.Description = 'Daily Accrued Interest'
+
+            hypoAccount.Transactions.push(transaction);
+
+            const newBalance = hypoAccount.DailyBalance[i - 1] + transaction.Amount;
+            hypoAccount.DailyBalance.push(newBalance)
+          } else {
+            hypoAccount.DailyBalance.push(hypoAccount.DailyBalance[i - 1])
+          }
+        }
+
+        const accruedInterest = hypoAccount.Transactions
+          .filter(x => x.Category === 'Interest')
+          .map(x => x.Amount)
+          .reduce((prev, curr) => prev + curr, 0)
+
+        console.log(`After ${numOfDays} day, ${account.Name} has 
+          a starting balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
+          an ending balance of ${hypoAccount.DailyBalance[numOfDays - 1].toFixed(2)},
+          with accured interest of ${accruedInterest.toFixed(2)}`);
+      }
+    }
+  }
+
+  private getDailyInterestRate(account: Account): number {
+    if (!account.APR)
+      return 0;
+
+    return (account.APR / 100) / (this.isLeapYear() ? 366 : 365);
+  }
+
+  private isLeapYear(): boolean {
+    const date = new Date(Date.now());
+    return ((date.getFullYear() % 4 == 0) && (date.getFullYear() % 100 != 0)) || (date.getFullYear() % 400 == 0);
+  }
+
+  private getDateDiff = (date1: Date, date2: Date): number => {
+    const diffMs = date2.getTime() - date1.getTime();
+    const diffSec = diffMs / 1000;
+    const diffMin = diffSec / 60;
+    const diffHr = diffMin / 60;
+    const diffDays = diffHr / 24;
+    return diffDays;
   }
 
   @HostListener('window:keyup', ['$event'])

@@ -20,6 +20,7 @@ export class Hypothetical {
 
 export class HypotheticalAccount {
     HypotheticalAccountId = generateUniqueId();
-    PaymentAccountId = 0;
+    AccountId = 0;
     Transactions = new Array<Transaction>();
+    DailyBalance = new Array<number>();
 }
