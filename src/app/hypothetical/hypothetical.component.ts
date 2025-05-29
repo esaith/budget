@@ -4,6 +4,7 @@ import { ConfirmService } from '../shared/confirm-delete/confirm.service';
 import { AccountService } from '../entities/account.service';
 import { HypotheticalService } from '../entities/hypothetical.service';
 import { Hypothetical } from './hypothetical';
+import { Account } from '../entities/account';
 
 @Component({
   selector: 'app-hypothetical',
@@ -32,6 +33,7 @@ export class HypotheticalComponent implements OnInit {
   private confirmService = inject(ConfirmService);
 
   hypo = new Hypothetical();
+  accounts = new Array<Account>();
 
   async ngOnInit() {
     const id = +this.route.snapshot.params['id'];
@@ -43,6 +45,7 @@ export class HypotheticalComponent implements OnInit {
     }
 
     this.hypo = hypo as Hypothetical;
+    this.accounts = await this.accountService.getAccounts();
   }
 
   save = async () => {
