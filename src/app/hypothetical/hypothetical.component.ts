@@ -53,17 +53,10 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     this.hypo = hypo as Hypothetical;
     this.accounts = await this.accountService.getAccounts();
 
-    for (let account of this.accounts) {
-      if (!this.hypo.Accounts.some(x => x.AccountId === account.AccountId)) {
-        const newHypotheticalAccount = new HypotheticalAccount();
-        newHypotheticalAccount.AccountId = account.AccountId;
-        this.hypo.Accounts.push(newHypotheticalAccount);
-      }
-    }
+    this.createHypoAccountPerAccount();
   }
 
   ngAfterViewInit() {
-    console.log(this.endDate)
     this.cdr.markForCheck();
   }
 
@@ -81,9 +74,15 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onDateChange = (endDateStr: string) => {
-    const startDate = new Date(Date.now());
+  onDateChange = (endDateStr: string, startDate: Date | null = null) => {
+
+    if (startDate == null)
+      startDate = new Date(Date.now());
+
     startDate.setUTCHours(12, 0, 0, 0);
+
+    if (!endDateStr)
+      endDateStr = new Date(Date.now()).toDateString();
 
     const endDate = new Date(endDateStr);
     endDate.setUTCHours(12, 0, 0, 0);
@@ -94,6 +93,8 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
   }
 
   private calculateAccountBalance = (numOfDays: number) => {
+    this.createHypoAccountPerAccount();
+
     for (const hypoAccount of this.hypo.Accounts) {
       hypoAccount.DailyBalance = new Array<number>();
       hypoAccount.Transactions = new Array<Transaction>();
@@ -138,10 +139,27 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
           .map(x => x.Amount)
           .reduce((prev, curr) => prev + curr, 0)
 
-        console.log(`After ${numOfDays} day, ${account.Name} has 
+        if (numOfDays > 0) {
+          console.log(`After ${numOfDays} day, ${account.Name} has 
           a starting balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
           an ending balance of ${hypoAccount.DailyBalance[numOfDays - 1].toFixed(2)},
           with accured interest of ${accruedInterest.toFixed(2)}`);
+        } else {
+          console.log(`After ${numOfDays} day, ${account.Name} has 
+          a starting balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
+          an ending balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
+          with accured interest of ${accruedInterest.toFixed(2)}`);
+        }
+      }
+    }
+  }
+
+  private createHypoAccountPerAccount = () => {
+    for (let account of this.accounts) {
+      if (!this.hypo.Accounts.some(x => x.AccountId === account.AccountId)) {
+        const newHypotheticalAccount = new HypotheticalAccount();
+        newHypotheticalAccount.AccountId = account.AccountId;
+        this.hypo.Accounts.push(newHypotheticalAccount);
       }
     }
   }
