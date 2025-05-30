@@ -1,4 +1,4 @@
-<div class="flex align-top">
+<div class="flex align-top dark:text-white">
     <div class="max-1/2 p-4 flex-1">
         <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">Hypothetical</h3>
         <div class="mb-5">
@@ -23,10 +23,20 @@
         </div>
     </div>
     <div class="max-1/2 p-4 flex-2">
-        <div class="mb-5 w-fit">
-            <label for="EndDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
-            <input type="date" id="EndDate" [(ngModel)]="endDate" (ngModelChange)="onDateChange($event)"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+        <div class="flex align-center">
+            <div class="mb-5 w-fit">
+                <label for="EndRange" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Range</label>
+                <select id="EndRange" [(ngModel)]="endRange" (change)="endRangeChange($event)" name="endRange"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option *ngFor="let option of endDateRangeOptions" [value]="option">{{option}}</option>
+                </select>
+            </div>
+            <div class="mx-5">OR</div>
+            <div class="mb-5 w-fit">
+                <label for="EndDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
+                <input type="date" id="EndDate" [(ngModel)]="endDate" (ngModelChange)="onDateChange($event)"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
         </div>
     </div>
 </div>

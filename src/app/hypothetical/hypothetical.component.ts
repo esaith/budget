@@ -40,6 +40,8 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
   hypo = new Hypothetical();
   accounts = new Array<Account>();
   endDate = formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en-US');
+  endDateRangeOptions = ['', '7 days (1 week)', '30 days (1 month)', '90 days (3 months)', '180 days (6 months)', '270 days (9 months)', '360 days (12 months)'];
+  endRange = '';
 
   async ngOnInit() {
     const id = +this.route.snapshot.params['id'];
@@ -74,8 +76,42 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onDateChange = (endDateStr: string, startDate: Date | null = null) => {
+  endRangeChange = (event: Event) => {
+    let diff = 0;
+    const endDateRangeStr = (event.target as any)?.value as string;
+    const index = this.endDateRangeOptions.findIndex(x => x === endDateRangeStr);
 
+    switch (index) {
+      case 1:
+        diff = 7
+        break;
+      case 2:
+        diff = 30;
+        break;
+      case 3:
+        diff = 30 * 3;
+        break;
+      case 4:
+        diff = 30 * 6;
+        break;
+      case 5:
+        diff = 30 * 9;
+        break;
+      case 6:
+        diff = 30 * 12;
+        break;
+      default:
+        return;
+    }
+
+    const date = new Date(Date.now());
+    date.setDate(date.getDate() + diff);
+
+    this.endDate = formatDate(date, 'yyyy-MM-dd', 'en-US');
+    this.onDateChange(date.toDateString());
+  }
+
+  onDateChange = (endDateStr: string, startDate: Date | null = null) => {
     if (startDate == null)
       startDate = new Date(Date.now());
 
