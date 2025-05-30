@@ -79,13 +79,13 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     if (startDate == null)
       startDate = new Date(Date.now());
 
-    startDate.setHours(12, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0);
 
     if (!endDateStr)
       endDateStr = new Date(Date.now().toLocaleString()).toDateString();
 
     const endDate = new Date(endDateStr);
-    endDate.setHours(12, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
 
     this.calculateAccountBalance(startDate, endDate);
   }
@@ -120,8 +120,8 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
             const transaction = new Transaction();
             transaction.AccountId = account.AccountId;
 
-            const date = new Date();
-            date.setDate(startDate.getDate() + i);
+            const date = new Date(startDate.valueOf());
+            date.setDate(date.getDate() + i);
             const dailyInterestRate = this.getDailyInterestRate(date, account);
 
             transaction.Amount = hypoAccount.DailyBalance[i - 1] * dailyInterestRate;
@@ -143,12 +143,12 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
           .reduce((prev, curr) => prev + curr, 0)
 
         if (numOfDays > 0) {
-          console.log(`After 0 days, ${account.Name} has 
+          console.log(`After ${numOfDays} days, ${account.Name} has 
           a starting balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
           an ending balance of ${hypoAccount.DailyBalance[numOfDays - 1].toFixed(2)},
           with accured interest of ${accruedInterest.toFixed(2)}`);
         } else {
-          console.log(`After ${numOfDays} days, ${account.Name} has 
+          console.log(`After 0 days, ${account.Name} has 
           a starting balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
           an ending balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
           with accured interest of ${accruedInterest.toFixed(2)}`);
@@ -193,7 +193,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     const diffMin = diffSec / 60;
     const diffHr = diffMin / 60;
     const diffDays = diffHr / 24;
-    return diffDays;
+    return Math.floor(diffDays);
   }
 
   @HostListener('window:keyup', ['$event'])
