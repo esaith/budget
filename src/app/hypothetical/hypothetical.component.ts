@@ -4,7 +4,7 @@ import { ConfirmService } from '../shared/confirm-delete/confirm.service';
 import { AccountService } from '../entities/account.service';
 import { HypotheticalService } from '../entities/hypothetical.service';
 import { Hypothetical, HypotheticalAccount } from './hypothetical';
-import { Account, AccountType } from '../entities/account';
+import { Account, AccountType, APR } from '../entities/account';
 import { formatDate } from '@angular/common';
 import { LogService } from '../entities/log.service';
 import { Transaction } from '../entities/transaction';
@@ -79,20 +79,20 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     if (startDate == null)
       startDate = new Date(Date.now());
 
-    startDate.setUTCHours(12, 0, 0, 0);
+    startDate.setHours(12, 0, 0, 0);
 
     if (!endDateStr)
-      endDateStr = new Date(Date.now()).toDateString();
+      endDateStr = new Date(Date.now().toLocaleString()).toDateString();
 
     const endDate = new Date(endDateStr);
-    endDate.setUTCHours(12, 0, 0, 0);
+    endDate.setHours(12, 0, 0, 0);
 
-    const numOfDays = this.getDateDiff(startDate, endDate);
-
-    this.calculateAccountBalance(numOfDays);
+    this.calculateAccountBalance(startDate, endDate);
   }
 
-  private calculateAccountBalance = (numOfDays: number) => {
+  private calculateAccountBalance = (startDate: Date, endDate: Date) => {
+    const numOfDays = this.getDateDiff(startDate, endDate);
+
     this.createHypoAccountPerAccount();
 
     for (const hypoAccount of this.hypo.Accounts) {
@@ -110,18 +110,21 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
         /* Need to find out if there was a previous balance after last due date. If so, calculate daily compound
             interest. If not, do nothing. For now, we will assume there was a balance.
         */
-        const dailyInterestRate = this.getDailyInterestRate(account);
+
         hypoAccount.DailyBalance.push(account.Balance);
 
-        for (let i = 1; i < numOfDays; ++i) {
+        for (let i = 1; i <= numOfDays; ++i) {
 
           if (hypoAccount.DailyBalance[i - 1] < 0) {
 
             const transaction = new Transaction();
             transaction.AccountId = account.AccountId;
 
+            const date = new Date();
+            date.setDate(startDate.getDate() + i);
+            const dailyInterestRate = this.getDailyInterestRate(date, account);
+
             transaction.Amount = hypoAccount.DailyBalance[i - 1] * dailyInterestRate;
-            //console.log(`${i}, ${transaction.Amount}`);
             transaction.Category = 'Interest';
             transaction.Description = 'Daily Accrued Interest'
 
@@ -140,12 +143,12 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
           .reduce((prev, curr) => prev + curr, 0)
 
         if (numOfDays > 0) {
-          console.log(`After ${numOfDays} day, ${account.Name} has 
+          console.log(`After 0 days, ${account.Name} has 
           a starting balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
           an ending balance of ${hypoAccount.DailyBalance[numOfDays - 1].toFixed(2)},
           with accured interest of ${accruedInterest.toFixed(2)}`);
         } else {
-          console.log(`After ${numOfDays} day, ${account.Name} has 
+          console.log(`After ${numOfDays} days, ${account.Name} has 
           a starting balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
           an ending balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
           with accured interest of ${accruedInterest.toFixed(2)}`);
@@ -164,11 +167,19 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private getDailyInterestRate(account: Account): number {
+  private getDailyInterestRate(date: Date, account: Account): number {
     if (!account.APR)
       return 0;
 
-    return (account.APR / 100) / (this.isLeapYear() ? 366 : 365);
+    if (account.APRPromo && this.withinAPRPromoRange(date, account.APRPromo.StartDate, account.APRPromo.EndDate)) {
+      return (account.APRPromo.Rate / 100) / (this.isLeapYear() ? 366 : 365);
+    } else {
+      return (account.APR / 100) / (this.isLeapYear() ? 366 : 365);
+    }
+  }
+
+  private withinAPRPromoRange = (date: Date, startDate: Date, endDate: Date): boolean => {
+    return startDate <= date && date <= endDate;
   }
 
   private isLeapYear(): boolean {

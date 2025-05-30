@@ -14,6 +14,10 @@ module.exports = function (config) {
         client: {
             clearContext: false // leave Jasmine Spec Runner output visible in browser
         },
+
+        exclude: [
+            './tailwind.config.js'
+        ],
         // coverageIstanbulReporter: {
         //     dir: require('path').join(__dirname, 'coverage'),
         //     reports: ['html', 'lcovonly'],

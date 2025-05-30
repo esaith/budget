@@ -6,7 +6,10 @@
     "outDir": "./out-tsc/spec",
     "types": ["jasmine"],
     "skipLibCheck": true,
-    "strict": false
+    "strict": false,
+    "paths": {
+      "tailwind.config": ["./src/tailwind-config.mock.ts"]
+    }
   },
   "files": ["src/test.ts"],
   "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
