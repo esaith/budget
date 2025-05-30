@@ -82,7 +82,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     startDate.setHours(0, 0, 0, 0);
 
     if (!endDateStr)
-      endDateStr = new Date(Date.now().toLocaleString()).toDateString();
+      endDateStr = new Date(Date.now()).toDateString();
 
     const endDate = new Date(endDateStr);
     endDate.setHours(0, 0, 0, 0);
@@ -121,7 +121,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
             transaction.AccountId = account.AccountId;
 
             const date = new Date(startDate.valueOf());
-            date.setDate(date.getDate() + i);
+            date.setDate(date.getDate() + (i - 1));
             const dailyInterestRate = this.getDailyInterestRate(date, account);
 
             transaction.Amount = hypoAccount.DailyBalance[i - 1] * dailyInterestRate;
@@ -193,7 +193,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     const diffMin = diffSec / 60;
     const diffHr = diffMin / 60;
     const diffDays = diffHr / 24;
-    return Math.floor(diffDays);
+    return Math.floor(diffDays) + 1;
   }
 
   @HostListener('window:keyup', ['$event'])

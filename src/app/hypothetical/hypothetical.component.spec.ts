@@ -44,7 +44,9 @@ describe('hypothetical component', () => {
             expect(component.hypo.Accounts.length).toEqual(0);
         });
 
-        it('1Account. Null start and end date. Return 0 for all accounts', () => {
+        // if end date is before start date, set end date as start date
+
+        it('1Account. Start null. End Null. Set both start and end as today. Return 1 day of compound interest', () => {
             component.accounts = new Array<Account>();
 
             const account = new Account();
@@ -60,11 +62,38 @@ describe('hypothetical component', () => {
 
             // Assert
             expect(component.hypo.Accounts.length).toEqual(1);
-            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(1);
+            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(2);
             expect(component.hypo.Accounts[0].DailyBalance[0]).toEqual(-1000);
+            expect(+component.hypo.Accounts[0].DailyBalance[1].toFixed(2)).toEqual(-1000.27);
         });
 
-        it('1Account. Start today and tomorrow. Return valid APR', () => {
+        it('1Account. Start today. End today. Return 1 day of compound interest.', () => {
+            component.accounts = new Array<Account>();
+
+            const account = new Account();
+            account.Name = 'Test';
+            account.APR = 10;
+            account.Balance = -1000;
+            account.Type = AccountType.CreditCard;
+
+            component.accounts.push(account);
+
+            // Act
+            const endDate = new Date(Date.now());
+            endDate.setHours(0, 0, 0, 0);
+
+            const startDate = new Date(endDate.valueOf())
+
+            component.onDateChange(endDate.toDateString(), startDate);
+
+            // Assert
+            expect(component.hypo.Accounts.length).toEqual(1);
+            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(2);
+            expect(component.hypo.Accounts[0].DailyBalance[0]).toEqual(-1000);
+            expect(+component.hypo.Accounts[0].DailyBalance[1].toFixed(2)).toEqual(-1000.27);
+        });
+
+        it('1Account. Start today. End tomorrow. Return 2 days of compound interest.', () => {
             component.accounts = new Array<Account>();
 
             const account = new Account();
@@ -84,12 +113,13 @@ describe('hypothetical component', () => {
 
             // Assert
             expect(component.hypo.Accounts.length).toEqual(1);
-            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(2);
+            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(3);
             expect(component.hypo.Accounts[0].DailyBalance[0]).toEqual(-1000);
             expect(+component.hypo.Accounts[0].DailyBalance[1].toFixed(2)).toEqual(-1000.27);
+            expect(+component.hypo.Accounts[0].DailyBalance[2].toFixed(2)).toEqual(-1000.55);
         });
 
-        it('1Account. 4 days of compound interest. APR Promo for 6 months and within range.  Return PROMO APR', () => {
+        it('1Account. 5 days of compound interest. APR Promo for 6 months and within range. Return PROMO APR', () => {
             component.accounts = new Array<Account>();
 
             const account = new Account();
@@ -113,15 +143,16 @@ describe('hypothetical component', () => {
 
             // Assert
             expect(component.hypo.Accounts.length).toEqual(1);
-            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(5);
+            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(6);
             expect(component.hypo.Accounts[0].DailyBalance[0]).toEqual(-1000);
             expect(+component.hypo.Accounts[0].DailyBalance[1].toFixed(2)).toEqual(-1000.03);
             expect(+component.hypo.Accounts[0].DailyBalance[2].toFixed(2)).toEqual(-1000.05);
             expect(+component.hypo.Accounts[0].DailyBalance[3].toFixed(2)).toEqual(-1000.08);
             expect(+component.hypo.Accounts[0].DailyBalance[4].toFixed(2)).toEqual(-1000.11);
+            expect(+component.hypo.Accounts[0].DailyBalance[5].toFixed(2)).toEqual(-1000.14);
         });
 
-        it('1Account. 4 days of compound interest. APR Promo for 1 month. Starts within range. Ends outside.  Return PROMO APR', () => {
+        it('1Account. 5 days of compound interest. APR Promo for 1 month. Starts within range. Ends outside.  Return PROMO APR', () => {
             component.accounts = new Array<Account>();
 
             const account = new Account();
@@ -145,15 +176,16 @@ describe('hypothetical component', () => {
 
             // Assert
             expect(component.hypo.Accounts.length).toEqual(1);
-            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(5);
+            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(6);
             expect(component.hypo.Accounts[0].DailyBalance[0]).toEqual(-1000);
             expect(+component.hypo.Accounts[0].DailyBalance[1].toFixed(2)).toEqual(-1000.03);
             expect(+component.hypo.Accounts[0].DailyBalance[2].toFixed(2)).toEqual(-1000.05);
             expect(+component.hypo.Accounts[0].DailyBalance[3].toFixed(2)).toEqual(-1000.08);
-            expect(+component.hypo.Accounts[0].DailyBalance[4].toFixed(2)).toEqual(-1000.36);
+            expect(+component.hypo.Accounts[0].DailyBalance[4].toFixed(2)).toEqual(-1000.11);
+            expect(+component.hypo.Accounts[0].DailyBalance[5].toFixed(2)).toEqual(-1000.38);
         });
 
-        it('1Account. 4 days of compound interest. APR Promo for 1 month. Ends within range. Starts outside.  Return PROMO APR', () => {
+        it('1Account. 5 days of compound interest. APR Promo for 1 month. Ends within range. Starts outside.  Return PROMO APR', () => {
             component.accounts = new Array<Account>();
 
             const account = new Account();
@@ -177,12 +209,13 @@ describe('hypothetical component', () => {
 
             // Assert
             expect(component.hypo.Accounts.length).toEqual(1);
-            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(5);
+            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(6);
             expect(component.hypo.Accounts[0].DailyBalance[0]).toEqual(-1000);
-            expect(+component.hypo.Accounts[0].DailyBalance[1].toFixed(2)).toEqual(-1000.27);
-            expect(+component.hypo.Accounts[0].DailyBalance[2].toFixed(2)).toEqual(-1000.31);
-            expect(+component.hypo.Accounts[0].DailyBalance[3].toFixed(2)).toEqual(-1000.34);
-            expect(+component.hypo.Accounts[0].DailyBalance[4].toFixed(2)).toEqual(-1000.38);
+            expect(+component.hypo.Accounts[0].DailyBalance[1].toFixed(3)).toEqual(-1000.274);
+            expect(+component.hypo.Accounts[0].DailyBalance[2].toFixed(3)).toEqual(-1000.548);
+            expect(+component.hypo.Accounts[0].DailyBalance[3].toFixed(3)).toEqual(-1000.575);
+            expect(+component.hypo.Accounts[0].DailyBalance[4].toFixed(3)).toEqual(-1000.603);
+            expect(+component.hypo.Accounts[0].DailyBalance[5].toFixed(3)).toEqual(-1000.63);
         });
     });
 });
