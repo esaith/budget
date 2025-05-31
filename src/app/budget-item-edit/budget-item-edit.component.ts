@@ -5,6 +5,7 @@ import { BudgetItemService } from '../entities/budget.service';
 import { ConfirmService } from '../shared/confirm-delete/confirm.service';
 import { AccountService } from '../entities/account.service';
 import { Account } from '../entities/account';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-budget-item-edit',
@@ -17,6 +18,8 @@ export class BudgetItemEditComponent {
   budgetItemTypes = new Array<string>();
   frequency = ['Days', 'Weeks', 'Months'];
   accounts = new Array<Account>();
+  startDate = '';
+  endDate = '';
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -34,7 +37,17 @@ export class BudgetItemEditComponent {
 
     this.budgetItemTypes = await this.budgetItemService.getBudgetItemTypes();
     this.budgetItem = budgetItem as BudgetItem;
+    this.startDate = this.budgetItem.StartDate ? formatDate(this.budgetItem.StartDate, 'yyyy-MM-dd', 'en-US') : '';
+    this.endDate = this.budgetItem.EndDate ? formatDate(this.budgetItem.EndDate, 'yyyy-MM-dd', 'en-US') : '';
     this.accounts = await this.accountService.getAccounts();
+  }
+
+  startDateChange = (date: string) => {
+    this.budgetItem.StartDate = new Date(date);
+  }
+
+  endDateChange = (date: string) => {
+    this.budgetItem.EndDate = new Date(date);
   }
 
   budgetItemTypeChange(event: Event) {

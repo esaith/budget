@@ -5,7 +5,7 @@ export class BudgetItem {
     Name = '';
     Amount = 0;
     Order = 0;
-    Type = '';
+    Type = '';   // Income, Mortage, Rent, Subscriptions, Utilities
     StartDate = new Date();
     EndDate = new Date();
     AccountId = 0;

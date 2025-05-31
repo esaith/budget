@@ -10,6 +10,8 @@ import { LogService } from '../entities/log.service';
 import { Transaction } from '../entities/transaction';
 import { Chart } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { BudgetItemService } from '../entities/budget.service';
+import { BudgetItem } from '../entities/budgetItem';
 
 @Component({
   selector: 'app-hypothetical',
@@ -35,12 +37,15 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
   private accountService = inject(AccountService);
   private hypoService = inject(HypotheticalService);
+  private budgetItemService = inject(BudgetItemService);
   private confirmService = inject(ConfirmService);
   private cdr = inject(ChangeDetectorRef);
   private logService = inject(LogService);
 
   hypo = new Hypothetical();
   accounts = new Array<Account>();
+  budgetItems = new Array<BudgetItem>();
+
   endDate = formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en-US');
   endDateRangeOptions = ['', '7 days (1 week)', '30 days (1 month)', '90 days (3 months)', '180 days (6 months)', '270 days (9 months)', '360 days (12 months)'];
   endRange = '';
@@ -59,6 +64,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
 
     this.hypo = hypo as Hypothetical;
     this.accounts = await this.accountService.getAccounts();
+    this.budgetItems = await this.budgetItemService.getBudgetItems();
 
     this.createHypoAccountPerAccount();
     this.chart?.update();
@@ -139,7 +145,115 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
 
     const numOfLabels = 10;
     let segmentLength = Math.floor(numOfDays / (numOfLabels - 1));
+    this.createTableXTickMarkLabels(numOfDays, numOfLabels, segmentLength)
 
+    this.createHypoAccountPerAccount();
+
+    for (const hypoAccount of this.hypo.Accounts) {
+      const account = this.accounts.find(x => x.AccountId === hypoAccount.AccountId);
+
+      if (!account) {
+        this.logService.addLog('Missing account by Id when calculating account diff in hypotheticals', 'error');
+        continue;
+      }
+
+      hypoAccount.DailyBalance = new Array<number>();
+      hypoAccount.Transactions = new Array<Transaction>();
+      hypoAccount.DailyBalance.push(account.Balance);
+
+
+      for (let i = 1; i <= numOfDays; ++i) {
+        hypoAccount.DailyBalance.push(hypoAccount.DailyBalance[i - 1]);
+
+        const currentDate = new Date(startDate.valueOf());
+        currentDate.setDate(currentDate.getDate() + (i - 1));
+
+        if (account.Type === AccountType.CreditCard) {
+          // Apply interest first for previous day before any new charges today
+          this.applyDailyCompoundInterest(i, account, hypoAccount, currentDate);
+        }
+
+        this.applyBudgetItemCharges(i, currentDate, hypoAccount)
+      }
+
+      if (account.Name !== 'New American Funding') {
+        const data = hypoAccount.DailyBalance.filter((x, i) => i % segmentLength === 0).map(x => (x).toFixed(2));
+        this.addOrUpdateChart(account.Name, data, account.BorderColor);
+      }
+    }
+  }
+
+  private applyBudgetItemCharges = (i: number, currentDate: Date, hypoAccount: HypotheticalAccount) => {
+    for (const budgetItem of this.budgetItems) {
+      if (budgetItem.AccountId !== hypoAccount.AccountId)
+        continue;
+
+      if (!budgetItem.StartDate) {
+        // May want to let user know about this
+        this.logService.addLog('applyBudgetItemCharges - Missing start date on repeatable budget item');
+        continue;
+      }
+
+      if (budgetItem.IsRepeat) {
+        if (budgetItem.Frequency === 'Months') {
+          const monthDiff = this.monthDiff(budgetItem.StartDate, currentDate);
+          if (monthDiff % +budgetItem.FrequencyNumber === 0) {
+            if (budgetItem.StartDate.getDate() === currentDate.getDate()) {
+              this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount);
+            }
+          }
+        } else if (budgetItem.Frequency === 'Days') {
+          const dateDiff = this.getDateDiff(budgetItem.StartDate, currentDate);
+          if (dateDiff % +budgetItem.FrequencyNumber === 0) {
+            this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount);
+          }
+        } else if (budgetItem.Frequency === 'Weeks') {
+          const dateDiff = this.getDateDiff(budgetItem.StartDate, currentDate);
+          if (dateDiff % (+budgetItem.FrequencyNumber * 8) === 0) {
+            this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount);
+          }
+        }
+      } else if (currentDate.getFullYear() === budgetItem.StartDate.getFullYear() &&
+        currentDate.getMonth() === budgetItem.StartDate.getMonth() &&
+        currentDate.getDate() === budgetItem.StartDate.getDate()) {
+        this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount);
+      }
+    }
+  }
+
+  private addTransactionFromBudgetItem = (i: number, budgetItem: BudgetItem, hypoAccount: HypotheticalAccount) => {
+    const transaction = new Transaction();
+    transaction.AccountId = hypoAccount.AccountId;
+    transaction.Amount = budgetItem.Amount;
+    transaction.Type = 'Charge';
+    transaction.Category = budgetItem.Type;
+
+    hypoAccount.Transactions.push(transaction);
+    hypoAccount.DailyBalance[i] += transaction.Amount;
+  }
+
+  private applyDailyCompoundInterest = (i: number, account: Account, hypoAccount: HypotheticalAccount, currentDate: Date) => {
+    if (hypoAccount.DailyBalance[i] < 0) {
+      const transaction = new Transaction();
+      transaction.AccountId = account.AccountId;
+
+
+      /* Need to find out if there was a previous balance after last due date. If so, calculate daily compound
+          interest. If not, do nothing. For now, we will assume there was a balance.
+      */
+
+
+      const dailyInterestRate = this.getDailyInterestRate(currentDate, account);
+
+      transaction.Amount = hypoAccount.DailyBalance[i] * dailyInterestRate;
+      transaction.Category = 'Interest';
+      transaction.Description = 'Daily Accrued Interest'
+
+      hypoAccount.DailyBalance[i] = hypoAccount.DailyBalance[i] + transaction.Amount;
+    }
+  };
+
+  private createTableXTickMarkLabels = (numOfDays: number, numOfLabels: number, segmentLength: number) => {
     const labels = new Array<string>();
     let date = new Date(Date.now());
 
@@ -149,73 +263,6 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     }
 
     this.setChart(labels);
-
-    this.createHypoAccountPerAccount();
-
-
-    for (const hypoAccount of this.hypo.Accounts) {
-      hypoAccount.DailyBalance = new Array<number>();
-      hypoAccount.Transactions = new Array<Transaction>();
-
-      const account = this.accounts.find(x => x.AccountId === hypoAccount.AccountId);
-      if (!account) {
-        this.logService.addLog('Missing account by Id when calculating account diff in hypotheticals', 'error');
-        continue;
-      }
-
-      if (account.Type === AccountType.CreditCard) {
-
-        /* Need to find out if there was a previous balance after last due date. If so, calculate daily compound
-            interest. If not, do nothing. For now, we will assume there was a balance.
-        */
-
-        hypoAccount.DailyBalance.push(account.Balance);
-
-        for (let i = 1; i <= numOfDays; ++i) {
-
-          if (hypoAccount.DailyBalance[i - 1] < 0) {
-
-            const transaction = new Transaction();
-            transaction.AccountId = account.AccountId;
-
-            const date = new Date(startDate.valueOf());
-            date.setDate(date.getDate() + (i - 1));
-            const dailyInterestRate = this.getDailyInterestRate(date, account);
-
-            transaction.Amount = hypoAccount.DailyBalance[i - 1] * dailyInterestRate;
-            transaction.Category = 'Interest';
-            transaction.Description = 'Daily Accrued Interest'
-
-            hypoAccount.Transactions.push(transaction);
-
-            const newBalance = hypoAccount.DailyBalance[i - 1] + transaction.Amount;
-            hypoAccount.DailyBalance.push(newBalance)
-          } else {
-            hypoAccount.DailyBalance.push(hypoAccount.DailyBalance[i - 1])
-          }
-        }
-
-        const accruedInterest = hypoAccount.Transactions
-          .filter(x => x.Category === 'Interest')
-          .map(x => x.Amount)
-          .reduce((prev, curr) => prev + curr, 0)
-
-        if (numOfDays > 0) {
-          console.log(`After ${numOfDays} days, ${account.Name} has 
-          a starting balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
-          an ending balance of ${hypoAccount.DailyBalance[numOfDays - 1].toFixed(2)},
-          with accured interest of ${accruedInterest.toFixed(2)}`);
-        } else {
-          console.log(`After 0 days, ${account.Name} has 
-          a starting balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
-          an ending balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
-          with accured interest of ${accruedInterest.toFixed(2)}`);
-        }
-
-        const data = hypoAccount.DailyBalance.filter((x, i) => i % segmentLength === 0).map(x => (-x).toFixed(2));
-        this.addOrUpdateChart(account.Name, data, account.BorderColor);
-      }
-    }
   }
 
   private createHypoAccountPerAccount = () => {
@@ -255,6 +302,14 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     const diffHr = diffMin / 60;
     const diffDays = diffHr / 24;
     return Math.floor(diffDays) + 1;
+  }
+
+  private monthDiff = (d1: Date, d2: Date): number => {
+    let months;
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth();
+    months += d2.getMonth();
+    return months <= 0 ? 0 : months;
   }
 
   setChart(labels: Array<string>) {

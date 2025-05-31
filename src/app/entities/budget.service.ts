@@ -51,7 +51,13 @@ export class BudgetItemService {
         const budgetItemStr = localStorage.getItem(`budgetItem_${budgetItemId}`);
 
         if (budgetItemStr) {
-            return Promise.resolve(JSON.parse(budgetItemStr));
+            const budgetItem: BudgetItem = Object.assign(new BudgetItem(), JSON.parse(budgetItemStr));
+
+            if (budgetItem.StartDate && typeof budgetItem.StartDate === 'string') {
+                budgetItem.StartDate = new Date(budgetItem.StartDate);
+            }
+
+            return Promise.resolve(budgetItem);
         }
 
         return Promise.resolve(null);
