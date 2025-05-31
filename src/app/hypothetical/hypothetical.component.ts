@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, inject, OnInit, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, inject, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmService } from '../shared/confirm-delete/confirm.service';
 import { AccountService } from '../entities/account.service';
@@ -8,6 +8,8 @@ import { Account, AccountType, APR } from '../entities/account';
 import { formatDate } from '@angular/common';
 import { LogService } from '../entities/log.service';
 import { Transaction } from '../entities/transaction';
+import { Chart } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-hypothetical',
@@ -16,7 +18,7 @@ import { Transaction } from '../entities/transaction';
   standalone: false
 })
 export class HypotheticalComponent implements OnInit, AfterViewInit {
-
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
 
   /* 
     There should be a defaults the user can clone or create new
@@ -43,6 +45,9 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
   endDateRangeOptions = ['', '7 days (1 week)', '30 days (1 month)', '90 days (3 months)', '180 days (6 months)', '270 days (9 months)', '360 days (12 months)'];
   endRange = '';
 
+  lineChartOptions = { elements: { line: { tension: 0.5, } } };
+  data: any;
+
   async ngOnInit() {
     const id = +this.route.snapshot.params['id'];
     const hypo = await this.hypoService.getById(id);
@@ -56,6 +61,8 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     this.accounts = await this.accountService.getAccounts();
 
     this.createHypoAccountPerAccount();
+    this.chart?.update();
+    this.cdr.markForCheck();
   }
 
   ngAfterViewInit() {
@@ -124,12 +131,27 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     endDate.setHours(0, 0, 0, 0);
 
     this.calculateAccountBalance(startDate, endDate);
+
   }
 
   private calculateAccountBalance = (startDate: Date, endDate: Date) => {
     const numOfDays = this.getDateDiff(startDate, endDate);
 
+    const numOfLabels = 10;
+    let segmentLength = Math.ceil(numOfDays / (numOfLabels - 1));
+
+    const labels = new Array<string>();
+    let date = new Date(Date.now());
+
+    for (let i = 0; i < numOfLabels; ++i) {
+      labels.push(date.toDateString());
+      date.setDate(date.getDate() + segmentLength);
+    }
+
+    this.setChart(labels);
+
     this.createHypoAccountPerAccount();
+
 
     for (const hypoAccount of this.hypo.Accounts) {
       hypoAccount.DailyBalance = new Array<number>();
@@ -189,6 +211,10 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
           an ending balance of ${hypoAccount.DailyBalance[0].toFixed(2)},
           with accured interest of ${accruedInterest.toFixed(2)}`);
         }
+
+        segmentLength = Math.ceil(numOfDays / (numOfLabels));
+        const data = hypoAccount.DailyBalance.filter((x, i) => i % segmentLength === 0).map(x => (-x).toFixed(2));
+        this.addOrUpdateChart(account.Name, data);
       }
     }
   }
@@ -230,6 +256,33 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     const diffHr = diffMin / 60;
     const diffDays = diffHr / 24;
     return Math.floor(diffDays) + 1;
+  }
+
+  setChart(labels: Array<string>) {
+    this.data = {
+      datasets: [],
+      labels: labels
+    };
+  }
+
+  addOrUpdateChart(lineLabel: string, data: Array<string>) {
+    const index = this.data.datasets.find((x: any) => x.label === lineLabel);
+
+    if (index > -1) {
+      this.data.datasets[index] = data;
+    } else {
+      this.data.datasets.push(
+        {
+          label: lineLabel,
+          data: data,
+          borderColor: 'rgba(148,159,177,1)',
+          pointBackgroundColor: 'rgba(148,159,177,1)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgba(148,159,177,0.8)',
+        }
+      );
+    }
   }
 
   @HostListener('window:keyup', ['$event'])

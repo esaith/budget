@@ -10,7 +10,7 @@ import { ConfirmDeleteComponent } from './shared/confirm-delete/confirm-delete.c
 import { BudgetItemEditComponent } from './budget-item-edit/budget-item-edit.component';
 import { CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { HypotheticalComponent } from './hypothetical/hypothetical.component';
-
+import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -27,8 +27,10 @@ import { HypotheticalComponent } from './hypothetical/hypothetical.component';
     ReactiveFormsModule,
     AppRoutingModule,
     CdkDropList,
-    CdkDrag
+    CdkDrag,
+    BaseChartDirective
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: [provideCharts(withDefaultRegisterables())],
 })
 export class AppModule { }
