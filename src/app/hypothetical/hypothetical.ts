@@ -12,7 +12,7 @@ export class Hypothetical {
         clone.HypotheticalId = this.HypotheticalId;
         clone.Name = this.Name;
         clone.Order = this.Order;
-        clone.Accounts = this.Accounts;
+        clone.Accounts = this.Accounts.map(x => x.clone());
 
         return clone;
     }
@@ -20,8 +20,13 @@ export class Hypothetical {
 
 export class HypotheticalAccount {
     HypotheticalAccountId = generateUniqueId();
-    AccountId = 0;
+    AccountId = generateUniqueId();
     Transactions = new Array<Transaction>();
     DailyBalance = new Array<number>();
 
+    clone = (): HypotheticalAccount => {
+        const clone = new HypotheticalAccount();
+        clone.AccountId = this.AccountId;
+        return clone;
+    }
 }

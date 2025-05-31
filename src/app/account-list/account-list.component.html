@@ -141,7 +141,8 @@
         <tr>
           <th></th>
           <th scope="col" class="px-6 py-3">Name</th>
-          <th scope="col" class="px-6 py-3">Edit</th>
+          <th scope="col" class="py-3">Clone</th>
+          <th scope="col" class="py-3">Edit</th>
         </tr>
       </thead>
       <tbody cdkDropList (cdkDropListDropped)="dropHypotheticals($event)">
@@ -158,7 +159,10 @@
           <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
             {{ hypo.Name }}
           </td>
-          <td scope="row" class="px-6 py-4 text-sky-500 whitespace-nowrap cursor-pointer">
+          <td scope="row" class="py-4 text-sky-500 whitespace-nowrap cursor-pointer">
+            <div (click)="duplicateHypothetical(hypo)">Clone</div>
+          </td>
+          <td scope="row" class="py-4 text-sky-500 whitespace-nowrap cursor-pointer">
             <div (click)="editHypothetical(hypo)">Edit</div>
           </td>
         </tr>

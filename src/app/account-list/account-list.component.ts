@@ -67,7 +67,6 @@ export class AccountListComponent implements OnInit {
     }
   }
 
-
   editAccount = async (account: Account) => {
     this.router.navigate(['/account-edit', account.AccountId]);
   }
@@ -79,6 +78,12 @@ export class AccountListComponent implements OnInit {
   editHypothetical = async (hypo: Hypothetical) => {
     this.router.navigate(['/hypothetical', hypo.HypotheticalId]);
   }
+
+  duplicateHypothetical = async (hypo: Hypothetical) => {
+    const clone = hypo.clone();
+    this.hypotheticalService.save(clone);
+    this.hypotheticals.push(clone);
+  };
 
   createNewBudgetItem = () => {
     if (!this.newBudgetItemName) {

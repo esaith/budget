@@ -138,8 +138,8 @@ describe('hypothetical component', () => {
             component.accounts.push(account);
 
             // Act
-            const endDate = new Date(2025, 2, 5, 12);
             const startDate = new Date(2025, 2, 1, 12);
+            const endDate = new Date(2025, 2, 5, 12);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -172,8 +172,8 @@ describe('hypothetical component', () => {
             component.accounts.push(account);
 
             // Act
-            const endDate = new Date(2025, 2, 5);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 5);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -206,8 +206,8 @@ describe('hypothetical component', () => {
             component.accounts.push(account);
 
             // Act
-            const endDate = new Date(2025, 2, 5);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 5);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -245,8 +245,8 @@ describe('hypothetical component', () => {
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -281,8 +281,8 @@ describe('hypothetical component', () => {
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -317,8 +317,8 @@ describe('hypothetical component', () => {
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -353,8 +353,8 @@ describe('hypothetical component', () => {
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -389,8 +389,8 @@ describe('hypothetical component', () => {
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -421,12 +421,12 @@ describe('hypothetical component', () => {
             budgetItem.FrequencyNumber = '1';
             budgetItem.Frequency = 'Weeks'
             budgetItem.IsRepeat = true;
-            budgetItem.StartDate = new Date(2025, 1, 22);
+            budgetItem.StartDate = new Date(2025, 1, 23);
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -461,8 +461,8 @@ describe('hypothetical component', () => {
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -497,8 +497,8 @@ describe('hypothetical component', () => {
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -533,8 +533,8 @@ describe('hypothetical component', () => {
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -569,8 +569,8 @@ describe('hypothetical component', () => {
             component.budgetItems.push(budgetItem);
 
             // Act
-            const endDate = new Date(2025, 2, 2);
             const startDate = new Date(2025, 2, 1);
+            const endDate = new Date(2025, 2, 2);
 
             component.onDateChange(endDate.toDateString(), startDate);
 
@@ -580,6 +580,46 @@ describe('hypothetical component', () => {
             expect(component.hypo.Accounts[0].DailyBalance[0]).toEqual(-1000);
             expect(+component.hypo.Accounts[0].DailyBalance[1].toFixed(3)).toEqual(-1000.274);
             expect(+component.hypo.Accounts[0].DailyBalance[2].toFixed(3)).toEqual(-1000.548);
+        });
+
+        it('1Account. 1BudgetItem - IsRepeat true. Income q 2/weeks. Range 1 month', () => {
+            component.accounts = new Array<Account>();
+            component.budgetItems = new Array<BudgetItem>();
+
+            const account = new Account();
+            account.Name = 'Bank Account';
+            account.APR = 0;
+            account.Balance = 1000;
+            account.Type = AccountType.Checking;
+            component.accounts.push(account);
+
+            const budgetItem = new BudgetItem();
+            budgetItem.Name = 'MediaLab'
+            budgetItem.AccountId = account.AccountId;
+            budgetItem.Amount = 2000;
+            budgetItem.Type = 'Income';
+            budgetItem.FrequencyNumber = '2';
+            budgetItem.Frequency = 'Weeks'
+            budgetItem.IsRepeat = true;
+            budgetItem.StartDate = new Date(2025, 4, 23);
+            component.budgetItems.push(budgetItem);
+
+            // Act
+            const startDate = new Date(2025, 4, 20);
+            const endDate = new Date(2025, 5, 25);
+
+            component.onDateChange(endDate.toDateString(), startDate);
+
+            // Assert
+            expect(component.hypo.Accounts.length).toEqual(1);
+            expect(component.hypo.Accounts[0].DailyBalance.length).toEqual(38);
+            expect(component.hypo.Accounts[0].DailyBalance[0]).toEqual(1000);
+            expect(+component.hypo.Accounts[0].DailyBalance[2].toFixed(3)).toEqual(1000);
+            expect(+component.hypo.Accounts[0].DailyBalance[3].toFixed(3)).toEqual(3000);
+            expect(+component.hypo.Accounts[0].DailyBalance[16].toFixed(3)).toEqual(3000);
+            expect(+component.hypo.Accounts[0].DailyBalance[17].toFixed(3)).toEqual(5000);
+            expect(+component.hypo.Accounts[0].DailyBalance[30].toFixed(3)).toEqual(5000);
+            expect(+component.hypo.Accounts[0].DailyBalance[31].toFixed(3)).toEqual(7000);
         });
     });
 });

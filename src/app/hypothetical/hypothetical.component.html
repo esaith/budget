@@ -32,10 +32,16 @@
                 </select>
             </div>
             <div class="mx-5">OR</div>
-            <div class="mb-5 w-fit">
+            <div class="mx-5 mb-5 w-fit">
                 <label for="EndDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">End Date</label>
                 <input type="date" id="EndDate" [(ngModel)]="endDate" (ngModelChange)="onDateChange($event)"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+            <div class="mb-5 mx-5 w-fit">
+                <label for="step" min="2" max="100" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Step</label>
+                <input type="range" id="step" [(ngModel)]="stepCount" (ngModelChange)="onStepCountChange($event)"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                <div class="mt-1 text-sm">{{stepCount}}</div>
             </div>
         </div>
         <canvas baseChart [data]="data" [options]="lineChartOptions" [type]="'line'"> </canvas>

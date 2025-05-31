@@ -46,9 +46,12 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
   accounts = new Array<Account>();
   budgetItems = new Array<BudgetItem>();
 
-  endDate = formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en-US');
+  startDate: Date | null = null;
+  endDate: Date | null = null;
+  endDateStr = formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en-US');
   endDateRangeOptions = ['', '7 days (1 week)', '30 days (1 month)', '90 days (3 months)', '180 days (6 months)', '270 days (9 months)', '360 days (12 months)'];
   endRange = '';
+  stepCount = 10;
 
   lineChartOptions = { elements: { line: { tension: 0.5, } } };
   data: any;
@@ -118,9 +121,11 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     }
 
     const date = new Date(Date.now());
-    date.setDate(date.getDate() + diff);
+    this.startDate = date;
 
-    this.endDate = formatDate(date, 'yyyy-MM-dd', 'en-US');
+    date.setDate(date.getDate() + diff);
+    this.endDate = date;
+    this.endDateStr = formatDate(date, 'yyyy-MM-dd', 'en-US');
     this.onDateChange(date.toDateString());
   }
 
@@ -129,6 +134,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
       startDate = new Date(Date.now());
 
     startDate.setHours(0, 0, 0, 0);
+    this.startDate = startDate;
 
     if (!endDateStr)
       endDateStr = new Date(Date.now()).toDateString();
@@ -136,20 +142,21 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     const endDate = new Date(endDateStr);
     endDate.setHours(0, 0, 0, 0);
 
+    this.endDate = endDate;
     this.calculateAccountBalance(startDate, endDate);
-
   }
 
   private calculateAccountBalance = (startDate: Date, endDate: Date) => {
     const numOfDays = this.getDateDiff(startDate, endDate);
 
-    const numOfLabels = 10;
-    let segmentLength = Math.floor(numOfDays / (numOfLabels - 1));
-    this.createTableXTickMarkLabels(numOfDays, numOfLabels, segmentLength)
+    let segmentLength = Math.floor(numOfDays / (this.stepCount - 1));
+    this.createTableXTickMarkLabels(this.stepCount, segmentLength)
 
     this.createHypoAccountPerAccount();
 
-    for (const hypoAccount of this.hypo.Accounts) {
+    for (let k = 0; k < this.hypo.Accounts.length; ++k) {
+      const hypoAccount = this.hypo.Accounts[k];
+
       const account = this.accounts.find(x => x.AccountId === hypoAccount.AccountId);
 
       if (!account) {
@@ -185,7 +192,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
 
   private applyBudgetItemCharges = (i: number, currentDate: Date, hypoAccount: HypotheticalAccount) => {
     for (const budgetItem of this.budgetItems) {
-      if (budgetItem.AccountId !== hypoAccount.AccountId)
+      if (+budgetItem.AccountId !== +hypoAccount.AccountId)
         continue;
 
       if (!budgetItem.StartDate) {
@@ -199,29 +206,29 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
           const monthDiff = this.monthDiff(budgetItem.StartDate, currentDate);
           if (monthDiff % +budgetItem.FrequencyNumber === 0) {
             if (budgetItem.StartDate.getDate() === currentDate.getDate()) {
-              this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount);
+              this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount, currentDate);
             }
           }
         } else if (budgetItem.Frequency === 'Days') {
           const dateDiff = this.getDateDiff(budgetItem.StartDate, currentDate);
           if (dateDiff % +budgetItem.FrequencyNumber === 0) {
-            this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount);
+            this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount, currentDate);
           }
         } else if (budgetItem.Frequency === 'Weeks') {
           const dateDiff = this.getDateDiff(budgetItem.StartDate, currentDate);
-          if (dateDiff % (+budgetItem.FrequencyNumber * 8) === 0) {
-            this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount);
+          if (dateDiff >= 0 && dateDiff % (+budgetItem.FrequencyNumber * 7) === 0) {
+            this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount, currentDate);
           }
         }
       } else if (currentDate.getFullYear() === budgetItem.StartDate.getFullYear() &&
         currentDate.getMonth() === budgetItem.StartDate.getMonth() &&
         currentDate.getDate() === budgetItem.StartDate.getDate()) {
-        this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount);
+        this.addTransactionFromBudgetItem(i, budgetItem, hypoAccount, currentDate);
       }
     }
   }
 
-  private addTransactionFromBudgetItem = (i: number, budgetItem: BudgetItem, hypoAccount: HypotheticalAccount) => {
+  private addTransactionFromBudgetItem = (i: number, budgetItem: BudgetItem, hypoAccount: HypotheticalAccount, currentDate: Date) => {
     const transaction = new Transaction();
     transaction.AccountId = hypoAccount.AccountId;
     transaction.Amount = budgetItem.Amount;
@@ -253,7 +260,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     }
   };
 
-  private createTableXTickMarkLabels = (numOfDays: number, numOfLabels: number, segmentLength: number) => {
+  private createTableXTickMarkLabels = (numOfLabels: number, segmentLength: number) => {
     const labels = new Array<string>();
     let date = new Date(Date.now());
 
@@ -337,6 +344,10 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
         }
       );
     }
+  }
+
+  onStepCountChange = (event: Event) => {
+    this.calculateAccountBalance(this.startDate as Date, this.endDate as Date);
   }
 
   @HostListener('window:keyup', ['$event'])
