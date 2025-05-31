@@ -16,6 +16,8 @@ export class Account {
     HasAPRPromo = false;
     APRPromo = new APR();
 
+    BorderColor = '';
+
     clone = (): Account => {
         const cloneAccount = new Account();
         cloneAccount.AccountId = this.AccountId;

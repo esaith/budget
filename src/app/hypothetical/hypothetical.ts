@@ -23,4 +23,5 @@ export class HypotheticalAccount {
     AccountId = 0;
     Transactions = new Array<Transaction>();
     DailyBalance = new Array<number>();
+
 }

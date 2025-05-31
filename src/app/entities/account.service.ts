@@ -43,6 +43,14 @@ export class AccountService {
 
             for (let i = 0; i < result.length; ++i) {
                 result[i].Order = i;
+
+                if (result[i].APRPromo) {
+                    if (result[i].APRPromo.StartDate)
+                        result[i].APRPromo.StartDate = new Date(result[i].APRPromo.StartDate);
+
+                    if (result[i].APRPromo.EndDate)
+                        result[i].APRPromo.EndDate = new Date(result[i].APRPromo.EndDate);
+                }
             }
         }
 

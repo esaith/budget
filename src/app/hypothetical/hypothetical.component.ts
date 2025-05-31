@@ -138,7 +138,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     const numOfDays = this.getDateDiff(startDate, endDate);
 
     const numOfLabels = 10;
-    let segmentLength = Math.ceil(numOfDays / (numOfLabels - 1));
+    let segmentLength = Math.floor(numOfDays / (numOfLabels - 1));
 
     const labels = new Array<string>();
     let date = new Date(Date.now());
@@ -212,9 +212,8 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
           with accured interest of ${accruedInterest.toFixed(2)}`);
         }
 
-        segmentLength = Math.ceil(numOfDays / (numOfLabels));
         const data = hypoAccount.DailyBalance.filter((x, i) => i % segmentLength === 0).map(x => (-x).toFixed(2));
-        this.addOrUpdateChart(account.Name, data);
+        this.addOrUpdateChart(account.Name, data, account.BorderColor);
       }
     }
   }
@@ -233,7 +232,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     if (!account.APR)
       return 0;
 
-    if (account.APRPromo && this.withinAPRPromoRange(date, account.APRPromo.StartDate, account.APRPromo.EndDate)) {
+    if (account.HasAPRPromo && account.APRPromo && this.withinAPRPromoRange(date, account.APRPromo.StartDate, account.APRPromo.EndDate)) {
       return (account.APRPromo.Rate / 100) / (this.isLeapYear() ? 366 : 365);
     } else {
       return (account.APR / 100) / (this.isLeapYear() ? 366 : 365);
@@ -265,7 +264,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
     };
   }
 
-  addOrUpdateChart(lineLabel: string, data: Array<string>) {
+  addOrUpdateChart(lineLabel: string, data: Array<string>, borderColor: string) {
     const index = this.data.datasets.find((x: any) => x.label === lineLabel);
 
     if (index > -1) {
@@ -275,7 +274,7 @@ export class HypotheticalComponent implements OnInit, AfterViewInit {
         {
           label: lineLabel,
           data: data,
-          borderColor: 'rgba(148,159,177,1)',
+          borderColor: borderColor || 'rgba(0,0,0,1)',
           pointBackgroundColor: 'rgba(148,159,177,1)',
           pointBorderColor: '#fff',
           pointHoverBackgroundColor: '#fff',
