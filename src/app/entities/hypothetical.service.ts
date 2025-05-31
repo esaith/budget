@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Hypothetical } from "../hypothetical/hypothetical";
+import { Hypothetical, HypotheticalAccount } from "../hypothetical/hypothetical";
 import { sortByOrder } from "./helper";
 
 @Injectable({
@@ -35,7 +35,10 @@ export class HypotheticalService {
         const hypoStr = localStorage.getItem(`hypothetical_${id}`);
 
         if (hypoStr) {
-            return Promise.resolve(JSON.parse(hypoStr));
+            const hypo: Hypothetical = Object.assign(new Hypothetical(), JSON.parse(hypoStr))
+            hypo.Accounts = hypo.Accounts.map(x => Object.assign(new HypotheticalAccount(), x));
+
+            return Promise.resolve(hypo);
         }
 
         return Promise.resolve(null);

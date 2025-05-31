@@ -1,5 +1,5 @@
-<div class="flex flex-row align-top w-screen">
-  <div class="p-2">
+<div class="flex flex-row align-top min-w-auto">
+  <div class="m-2">
     <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">
       Accounts
     </h3>
@@ -21,6 +21,7 @@
         <tr>
           <th scope="col" class="px-6 py-3"></th>
           <th scope="col" class="px-6 py-3">Name</th>
+          <th scope="col" class="px-6 py-3">APR</th>
           <th scope="col" class="px-6 py-3">Type</th>
           <th scope="col" class="px-6 py-3">Balance</th>
           <th scope="col" class="px-6 py-3">Edit</th>
@@ -44,6 +45,9 @@
             {{ account.Name }}
           </td>
           <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+            {{ account.todaysAPR }}
+          </td>
+          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
             {{ AccountType[account.Type] }}
           </td>
           <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
@@ -57,7 +61,7 @@
       </tbody>
     </table>
   </div>
-  <div class="p-2">
+  <div class="m-2">
     <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">
       Budget Items | Static Costs
     </h3>
@@ -81,6 +85,7 @@
           <th scope="col" class="px-6 py-3">Type</th>
           <th scope="col" class="px-6 py-3">Amount</th>
           <th scope="col" class="px-6 py-3">Frequency</th>
+          <th scope="col" class="px-6 py-3">Account</th>
           <th scope="col" class="px-6 py-3">Edit</th>
         </tr>
       </thead>
@@ -112,6 +117,9 @@
             : ""
             }}
           </td>
+          <td scope="row" class="px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+            {{ budgetItem.AccountName }}
+          </td>
           <td scope="row" class="px-6 py-4 text-sky-500 whitespace-nowrap cursor-pointer">
             <div (click)="editBudgetItem(budgetItem)">Edit</div>
           </td>
@@ -120,7 +128,7 @@
       </tbody>
     </table>
   </div>
-  <div class="p-2">
+  <div class="m-2">
     <h3 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-3xl lg:text-3xl dark:text-white">
       Hypotheticals
     </h3>

@@ -9,6 +9,7 @@ export class BudgetItem {
     StartDate = new Date();
     EndDate = new Date();
     AccountId = 0;
+    AccountName = '';
 
     IsRepeat = false;
     FrequencyNumber = '';

@@ -17,6 +17,7 @@ export class Account {
     APRPromo = new APR();
 
     BorderColor = '';
+    todaysAPR = '';
 
     clone = (): Account => {
         const cloneAccount = new Account();
@@ -28,6 +29,30 @@ export class Account {
         cloneAccount.Order = this.Order;
 
         return cloneAccount;
+    }
+
+    generateTodaysAPR() {
+        if (!this.APR) {
+            this.todaysAPR = '';
+            return;
+        }
+
+        const today = new Date(Date.now());
+        today.setHours(1, 0, 0);
+
+        if (this.HasAPRPromo && this.APRPromo) {
+            const startDate = new Date(this.APRPromo.StartDate);
+            startDate.setHours(0, 0, 0)
+            const endDate = new Date(this.APRPromo.EndDate);
+            endDate.setHours(11, 0, 0);
+
+            if (startDate <= today && today <= endDate) {
+                this.todaysAPR = this.APRPromo.Rate.toString();
+                return;
+            }
+        }
+
+        this.todaysAPR = this.APR.toString();
     }
 }
 

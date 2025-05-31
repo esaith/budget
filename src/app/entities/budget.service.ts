@@ -57,6 +57,7 @@ export class BudgetItemService {
                 budgetItem.StartDate = new Date(budgetItem.StartDate);
             }
 
+            budgetItem.AccountId = +budgetItem.AccountId;
             return Promise.resolve(budgetItem);
         }
 

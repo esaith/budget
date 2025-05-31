@@ -51,6 +51,8 @@ export class AccountService {
                     if (result[i].APRPromo.EndDate)
                         result[i].APRPromo.EndDate = new Date(result[i].APRPromo.EndDate);
                 }
+
+                result[i].generateTodaysAPR();
             }
         }
 

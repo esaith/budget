@@ -4,7 +4,7 @@ import { Account, AccountType } from '../entities/account';
 import { AccountService } from '../entities/account.service';
 import { BudgetItem } from '../entities/budgetItem';
 import { BudgetItemService } from '../entities/budget.service';
-import { sortByOrder } from '../entities/helper';
+import { generateUniqueId, sortByOrder } from '../entities/helper';
 import { CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Hypothetical } from '../hypothetical/hypothetical';
 import { HypotheticalService } from '../entities/hypothetical.service';
@@ -39,6 +39,13 @@ export class AccountListComponent implements OnInit {
     this.accounts.sort(sortByOrder);
 
     this.budgetItems = await this.budgetItemService.getBudgetItems();
+    for (const budgetItem of this.budgetItems) {
+      const account = this.accounts.find(acc => +acc.AccountId === +budgetItem.AccountId);
+      if (account) {
+        budgetItem.AccountName = account.Name;
+      }
+    }
+
     this.hypotheticals = await this.hypotheticalService.getAll();
   }
 
@@ -81,6 +88,7 @@ export class AccountListComponent implements OnInit {
 
   duplicateHypothetical = async (hypo: Hypothetical) => {
     const clone = hypo.clone();
+    clone.HypotheticalId = generateUniqueId();
     this.hypotheticalService.save(clone);
     this.hypotheticals.push(clone);
   };
